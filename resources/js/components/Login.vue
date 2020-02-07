@@ -16,7 +16,7 @@
                             Fill in your nickname to enter the game
                         </p>
                         <div class="input-group">
-                            <input id="name" type="text" name="name" class="form-control form-control-lg" />
+                            <input id="name" type="text" name="name" class="form-control form-control-lg" autocomplete="off" />
                         </div>
                         <button class="mt-3 btn btn-lg btn-block btn-primary">
                             Let's begin!
