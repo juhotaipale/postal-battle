@@ -11,7 +11,7 @@
     </head>
     <body>
         <div id="app">
-
+            <pusher></pusher>
         </div>
     </body>
 </html>
