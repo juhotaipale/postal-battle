@@ -66,7 +66,7 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'players' => [
             'driver' => 'eloquent',
             'model' => App\Player::class,
         ],
