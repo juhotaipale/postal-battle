@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Player;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
@@ -36,5 +39,36 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function username(): string
+    {
+        return 'name';
+    }
+
+    public function showLoginForm(): View
+    {
+        return view('index');
+    }
+
+    protected function validateLogin(Request $request): void
+    {
+        $this->validate($request, [
+            $this->username() => 'required|string',
+        ]);
+
+        $this->createIfNotExist($request->get($this->username()));
+    }
+
+    protected function createIfNotExist(string $name): void
+    {
+        Player::firstOrCreate([
+            'name' => $name,
+        ]);
+    }
+
+    protected function credentials(Request $request): array
+    {
+        return array_merge($request->only($this->username()));
     }
 }
