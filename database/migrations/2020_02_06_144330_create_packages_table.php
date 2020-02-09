@@ -14,7 +14,7 @@ class CreatePackagesTable extends Migration
     public function up()
     {
         Schema::create('packages', function (Blueprint $table) {
-            $table->uuid('id');
+            $table->uuid('id')->primary();
             $table->uuid('game_id');
             $table->uuid('distribution_centre_id');
             $table->uuid('parent');
