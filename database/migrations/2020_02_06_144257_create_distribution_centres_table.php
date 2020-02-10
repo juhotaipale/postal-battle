@@ -17,7 +17,6 @@ class CreateDistributionCentresTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->char('code', 5);
-            $table->timestamps();
         });
     }
 
