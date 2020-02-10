@@ -52,7 +52,7 @@ class LoginController extends Controller
             'name' => $request->name,
         ]);
 
-        Auth::login($player);
+        Auth::login($player, true);
 
         return new PlayerResource($player);
     }

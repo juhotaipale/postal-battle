@@ -19,9 +19,9 @@ class Card extends Model
         'parent_id',
     ];
 
-    public function getJjfiAttribute($value)
+    public function getOnTableAttribute(): bool
     {
-        return 'JJFI '.substr_replace(sprintf('%16d', $value), ' ', 5, 0);
+        return $this->id === '423be831-7c68-4a9e-9542-c5feea7810f4' || ($this->game->started_at && !$this->player);
     }
 
     public function game(): BelongsTo
@@ -37,5 +37,10 @@ class Card extends Model
     public function parent(): HasOne
     {
         return $this->hasOne(self::class, 'parent_id');
+    }
+
+    public function player(): HasOne
+    {
+        return $this->hasOne(Player::class);
     }
 }

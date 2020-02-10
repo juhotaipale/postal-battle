@@ -16,6 +16,7 @@ class CreateCardsTable extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('game_id');
+            $table->uuid('player_id')->nullable();
             $table->uuid('parent_id')->nullable();
             $table->uuidMorphs('cardable');
         });

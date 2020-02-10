@@ -11685,8 +11685,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "Card"
+  name: "Card",
+  props: ['card']
 });
 
 /***/ }),
@@ -11715,7 +11725,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "Game"
+  name: "Game",
+  props: ['data'],
+  computed: {
+    distributionCentres: function distributionCentres() {
+      return _.filter(this.data.cards, function (o) {
+        return o.type === 'distributionCentre';
+      });
+    },
+    filteredCards: function filteredCards() {
+      var cards = _.filter(this.data.cards, function (o) {
+        return o.data.code.substring(0, 2) === '00000'.substring(0, 2);
+      });
+
+      return _.orderBy(cards, ['data.code'], ['desc']);
+    }
+  }
 });
 
 /***/ }),
@@ -11736,8 +11761,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Hand",
+  props: ['cards'],
   data: function data() {
     return {
       selected: 8
@@ -11851,7 +11878,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "Placeholder"
+  name: "Placeholder",
+  props: ['cards']
 });
 
 /***/ }),
@@ -18489,7 +18517,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.placeholder[data-v-52f58ed8] {\n    width: 150px;\n    height: 200px;\n    border: 2px dashed gray;\n    border-radius: 0.5em;\n}\n", ""]);
+exports.push([module.i, "\n.firstMargin[data-v-52f58ed8] {\n    margin-top: -80px;\n    margin-bottom: -80px;\n}\n.lastMargin[data-v-52f58ed8] {\n    margin-top: -20px;\n    margin-bottom: -20px;\n}\n.placeholder[data-v-52f58ed8] {\n    width: 150px;\n    height: 200px;\n    border: 2px dashed gray;\n    border-radius: 0.5em;\n}\n", ""]);
 
 // exports
 
@@ -57977,42 +58005,67 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card d-flex" }, [
-      _c("div", { staticClass: "deco pt-2 px-2" }, [
-        _c("div", { staticClass: "type" }, [_vm._v("ECONOMY")]),
+  return _vm.card.type === "package"
+    ? _c("div", { staticClass: "card d-flex" }, [
+        _c("div", { staticClass: "deco pt-2 px-2" }, [
+          _c(
+            "div",
+            {
+              staticClass: "type text-uppercase",
+              class: { "text-danger": _vm.card.data.type === "priority" }
+            },
+            [
+              _vm._v(
+                "\n            " + _vm._s(_vm.card.data.type) + "\n        "
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "jjfi" }, [
+            _vm._v(_vm._s(_vm.card.data.jjfi))
+          ])
+        ]),
         _vm._v(" "),
-        _c("div", { staticClass: "jjfi" }, [_vm._v("JJFI 000000 00000000001")])
-      ]),
-      _vm._v(" "),
-      _c(
+        _c(
+          "div",
+          {
+            staticClass:
+              "address p-2 my-2 flex-grow-1 d-flex align-items-center"
+          },
+          [
+            _c("span", {
+              domProps: { innerHTML: _vm._s(_vm.card.data.address) }
+            })
+          ]
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "postcode pb-2 align-self-center" }, [
+          _vm._v("\n        " + _vm._s(_vm.card.data.code) + "\n    ")
+        ])
+      ])
+    : _c(
         "div",
         {
-          staticClass: "address p-2 my-2 flex-grow-1 d-flex align-items-center"
+          staticClass: "card d-flex",
+          staticStyle: { "background-color": "#fed8b1" }
         },
         [
-          _c("div", [
-            _c("b", [_vm._v("Essi Esimerkki")]),
-            _c("br"),
-            _vm._v("\n            Yliopistonkatu 23"),
-            _c("br"),
-            _vm._v("\n            11100 Riihimäki\n        ")
+          _c(
+            "div",
+            {
+              staticClass:
+                "flex-grow-1 d-flex justify-content-center align-items-end text-uppercase"
+            },
+            [_c("b", [_vm._v(_vm._s(_vm.card.data.name))])]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "postcode py-2 align-self-center" }, [
+            _c("h2", [_vm._v(_vm._s(_vm.card.data.code))])
           ])
         ]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "postcode pb-2 align-self-center" }, [
-        _vm._v("\n        11100\n    ")
-      ])
-    ])
-  }
-]
+      )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -58049,13 +58102,22 @@ var render = function() {
           staticClass:
             "distribution-centres d-flex flex-row flex-grow-1 align-items-center"
         },
-        _vm._l(8, function(index) {
-          return _c("placeholder", { key: index, staticClass: "mx-2" })
+        _vm._l(_vm.distributionCentres, function(card) {
+          return _c("placeholder", {
+            key: card.id,
+            staticClass: "mx-2",
+            attrs: { cards: _vm.filteredCards }
+          })
         }),
         1
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "hand py-4" }, [_c("hand")], 1)
+      _c(
+        "div",
+        { staticClass: "hand py-4" },
+        [_c("hand", { attrs: { cards: _vm.data.cards } })],
+        1
+      )
     ]
   )
 }
@@ -58093,12 +58155,13 @@ var render = function() {
   return _c(
     "div",
     { staticClass: "d-flex flex-row" },
-    _vm._l(14, function(index) {
+    _vm._l(_vm.cards, function(card, index) {
       return _c("card", {
-        key: index,
+        key: card.id,
         class: { selected: index === _vm.selected },
         staticStyle: { "margin-left": "-35px", "margin-right": "-35px" },
         style: { zIndex: index > _vm.selected ? 100 - index : 100 + index },
+        attrs: { card: card },
         nativeOn: {
           click: function($event) {
             return _vm.select(index)
@@ -58272,20 +58335,24 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c(
-      "div",
-      { staticClass: "d-flex flex-column" },
-      _vm._l(4, function(index) {
-        return _c("card", {
-          key: index,
-          staticStyle: { "margin-top": "-80px", "margin-bottom": "-80px" },
-          style: { zIndex: 100 - index }
-        })
-      }),
-      1
-    ),
-    _vm._v(" "),
-    false ? undefined : _vm._e()
+    _vm.cards.length > 0
+      ? _c(
+          "div",
+          { staticClass: "d-flex flex-column" },
+          _vm._l(_vm.cards, function(card, index) {
+            return _c("card", {
+              key: index,
+              class: {
+                firstMargin: index < _vm.cards.length - 1,
+                lastMargin: index === _vm.cards.length - 1
+              },
+              style: { firstMargin: _vm.firstMargin, zIndex: 100 - index },
+              attrs: { card: card }
+            })
+          }),
+          1
+        )
+      : _c("div", { staticClass: "placeholder" })
   ])
 }
 var staticRenderFns = []

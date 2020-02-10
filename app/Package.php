@@ -13,7 +13,7 @@ class Package extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'address', 'code',
+        'address', 'code', 'type',
     ];
 
     protected static function boot()
@@ -23,6 +23,11 @@ class Package extends Model
         static::creating(function (Model $model) {
             $model->jjfi = $model->count() + 1;
         });
+    }
+
+    public function getJjfiAttribute($value): string
+    {
+        return 'JJFI '.substr_replace(sprintf('%016d', $value), ' ', 6, 0);
     }
 
     public function card(): MorphOne

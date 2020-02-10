@@ -18,6 +18,7 @@ class PackageResource extends JsonResource
             'jjfi' => $this->jjfi,
             'address' => $this->address,
             'code' => $this->code,
+            'type' => $this->type,
         ];
     }
 }

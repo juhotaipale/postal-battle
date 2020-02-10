@@ -11,8 +11,5 @@
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-})->name('index');
-
+Route::get('/', 'IndexController@index')->name('index');
 Route::get('logout', 'Auth\LoginController@logout')->name('logout');

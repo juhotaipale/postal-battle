@@ -7,7 +7,7 @@
                                style="top: 10px; right: 10px; cursor: pointer;" />
         </a>
 
-        <game></game>
+        <game :data="{{ json_encode($game) }}"></game>
     @endauth
 
     @guest

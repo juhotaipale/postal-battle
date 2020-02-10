@@ -1,16 +1,18 @@
 <template>
     <div class="d-flex flex-row">
-        <card style="margin-left: -35px; margin-right: -35px;" v-for="index in 14" :key="index" @click.native="select(index)"
-              :style="{ zIndex: (index > selected ? 100 - index : 100 + index) }" :class="{ selected: (index === selected) }"></card>
+        <card style="margin-left: -35px; margin-right: -35px;" v-for="(card, index) in cards" :key="card.id" @click.native="select(index)"
+              :style="{ zIndex: (index > selected ? 100 - index : 100 + index) }" :class="{ selected: (index === selected) }"
+              :card="card"></card>
     </div>
 </template>
 
 <script>
     export default {
         name: "Hand",
+        props: ['cards'],
         data() {
             return {
-                selected: 8
+                selected: 8,
             }
         },
         methods: {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Card;
 use App\DistributionCentre;
 use App\Game;
+use App\Helpers\Address;
 use App\Http\Resources\GameResource;
 use App\Package;
 use Faker\Factory;
@@ -56,6 +57,7 @@ class GameController extends Controller
                 $postalCode = substr($key, 0, 2).$i;
                 $package = Package::create([
                     'code' => $postalCode,
+                    'type' => ['priority', 'economy', 'economy', 'economy'][rand(0, 3)],
                     'address' => $this->generateAddress($distributionCentre, $postalCode)
                 ]);
 
@@ -72,8 +74,8 @@ class GameController extends Controller
     {
         $faker = Factory::create('fi_FI');
 
-        return $faker->firstName.' '.$faker->lastName.'\n'
-            .$faker->streetName.' '.rand(1, 60).'\n'
+        return '<b>'.$faker->firstName.' '.$faker->lastName.'</b><br />'
+            .Address::rand().'<br />'
             .$postalCode.' '.$distributionCentre->name;
     }
 }

@@ -17,6 +17,7 @@ class CreatePackagesTable extends Migration
             $table->uuid('id')->primary();
             $table->bigInteger('jjfi');
             $table->char('code', 5);
+            $table->string('type', 20);
             $table->text('address');
         });
     }
