@@ -17,7 +17,7 @@ class GameController extends Controller
         return response()->json($game);
     }
 
-    private function generateCards(?Game $game = null)
+    protected function generateCards(Game $game = null)
     {
         $cards = [];
 
@@ -26,6 +26,8 @@ class GameController extends Controller
                 'code' => $key,
                 'name' => $value,
             ]);
+
+            $game->cards()->create()->cardable()->assign($distributionCentre);
 
             $previous = null;
 

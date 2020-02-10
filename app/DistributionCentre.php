@@ -10,6 +10,8 @@ class DistributionCentre extends Model
 {
     use HasUuid;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'code', 'name',
     ];

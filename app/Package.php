@@ -10,6 +10,8 @@ class Package extends Model
 {
     use HasUuid;
 
+    public $timestamps = false;
+
     public function card(): MorphOne
     {
         return $this->morphOne(Card::class, 'cardable');

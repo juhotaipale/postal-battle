@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Card extends Model
 {
+    public $timestamps = false;
+
     public function cardable(): MorphTo
     {
         return $this->morphTo();
