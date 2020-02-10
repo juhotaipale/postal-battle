@@ -2,9 +2,14 @@
 @section('content')
 
     @auth
-        <pusher></pusher>
-    @elseguest
-        <login></login>
+        <a href="{{ route('logout') }}">
+            <font-awesome-icon icon="times-circle" size="3x" title="Exit game" class="position-absolute"
+                               style="top: 10px; right: 10px; cursor: pointer;" />
+        </a>
     @endauth
+
+    @guest
+        <login></login>
+    @endguest
 
 @endsection

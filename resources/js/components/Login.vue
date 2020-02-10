@@ -47,6 +47,15 @@
         methods: {
             login() {
                 this.loading = true;
+
+                axios.post('api/auth', {
+                    name: this.name,
+                }).then(response => {
+                    location.reload();
+                }).catch(error => {
+                    this.loading = false;
+                    alert('Error');
+                });
             }
         }
     }
