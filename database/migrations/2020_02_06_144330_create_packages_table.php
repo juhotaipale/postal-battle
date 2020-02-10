@@ -15,6 +15,8 @@ class CreatePackagesTable extends Migration
     {
         Schema::create('packages', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->bigInteger('jjfi');
+            $table->char('code', 5);
             $table->text('address');
         });
     }

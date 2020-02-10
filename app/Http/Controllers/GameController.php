@@ -2,24 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Card;
 use App\DistributionCentre;
 use App\Game;
+use App\Http\Resources\GameResource;
 use App\Package;
+use Faker\Factory;
 use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
-    public function create()
-    {
-        $game = Game::create();
-        $this->generateCards($game);
+    protected $game = null;
 
-        return response()->json($game);
+    public function show(Game $game)
+    {
+        return response()->json(new GameResource($game));
     }
 
-    protected function generateCards(Game $game = null)
+    public function create()
     {
-        $cards = [];
+        $this->game = Game::create();
+        $this->generateCards();
+
+        return response()->json($this->game);
+    }
+
+    protected function createCard($cardable, Card $previous = null): Card
+    {
+        $card = new Card([
+            'game_id' => $this->game->id,
+            'parent_id' => optional($previous)->id,
+        ]);
+
+        $card->cardable()->associate($cardable);
+        $card->save();
+
+        return $card;
+    }
+
+    protected function generateCards()
+    {
+        $previous = null;
 
         foreach (DistributionCentre::listAll() as $key => $value) {
             $distributionCentre = DistributionCentre::create([
@@ -27,26 +50,30 @@ class GameController extends Controller
                 'name' => $value,
             ]);
 
-            $game->cards()->create()->cardable()->assign($distributionCentre);
-
-            $previous = null;
+            $previous = $this->createCard($distributionCentre, $previous);
 
             for ($i = 100; $i <= 600; $i += 100) {
+                $postalCode = substr($key, 0, 2).$i;
                 $package = Package::create([
-                    'distribution_centre_id' => $distributionCentre->id,
-                    'parent' => $previous,
-                    //'address' => $this->generateAddress(substr($distributionCentre->code, 0, 2).$i),
+                    'code' => $postalCode,
+                    'address' => $this->generateAddress($distributionCentre, $postalCode)
                 ]);
 
-                $cards[] = null;
+                $previous = $this->createCard($package, $previous);
             }
+
+            $previous = null;
         }
 
-        return response()->json($cards);
+        return response()->json([]);
     }
 
-    private function generateAddress(string $postalCode)
+    protected function generateAddress(DistributionCentre $distributionCentre, string $postalCode)
     {
+        $faker = Factory::create('fi_FI');
 
+        return $faker->firstName.' '.$faker->lastName.'\n'
+            .$faker->streetName.' '.rand(1, 60).'\n'
+            .$postalCode.' '.$distributionCentre->name;
     }
 }

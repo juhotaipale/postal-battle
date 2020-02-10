@@ -10,6 +10,11 @@ class Game extends Model
 {
     use HasUuid;
 
+    public function players(): HasMany
+    {
+        return $this->hasMany(Player::class);
+    }
+
     public function cards(): HasMany
     {
         return $this->hasMany(Card::class);

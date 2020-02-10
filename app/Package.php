@@ -12,6 +12,19 @@ class Package extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'address', 'code',
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (Model $model) {
+            $model->jjfi = $model->count() + 1;
+        });
+    }
+
     public function card(): MorphOne
     {
         return $this->morphOne(Card::class, 'cardable');

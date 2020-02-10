@@ -16,5 +16,6 @@ use Illuminate\Http\Request;
 Route::post('auth', 'Auth\LoginController@login');
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('game/create', 'GameController@generateCards');
+    Route::get('game/create', 'GameController@create');
+    Route::get('game/{game}', 'GameController@show');
 });
