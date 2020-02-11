@@ -33,6 +33,9 @@ library.add(faCircleNotch, faTimesCircle);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.config.productionTip = false;
 
+import Vuex from 'vuex';
+Vue.use(Vuex);
+
 const app = new Vue({
     el: '#app',
 });

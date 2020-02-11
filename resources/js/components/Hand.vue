@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex flex-row">
+    <div class="d-flex flex-row mb-5">
         <card style="margin-left: -35px; margin-right: -35px;" v-for="(card, index) in cards" :key="card.id" @click.native="select(index)"
               :style="{ zIndex: (index > selected ? 100 - index : 100 + index) }" :class="{ selected: (index === selected) }"
               :card="card"></card>
@@ -18,6 +18,7 @@
         methods: {
             select: function (index) {
                 this.selected = index;
+                this.cards[index].data.code = '33550';
             }
         },
         mounted() {

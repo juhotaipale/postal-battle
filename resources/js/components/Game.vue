@@ -3,8 +3,8 @@
         <div class="status py-4">
             <h2>POSTAL BATTLE</h2>
         </div>
-        <div class="distribution-centres d-flex flex-row flex-grow-1 align-items-center">
-            <placeholder v-for="card in distributionCentres" :key="card.id" class="mx-2" :cards="filteredCards"></placeholder>
+        <div class="distribution-centres d-flex flex-row flex-grow-1 align-items-end mb-5 pb-5">
+            <placeholder v-for="card in distributionCentres" :key="card.id" class="mx-2" :cards="filterByDistributionCentre(card)"></placeholder>
         </div>
         <div class="hand py-4">
             <hand :cards="data.cards"></hand>
@@ -21,15 +21,19 @@
                 return _.filter(this.data.cards, function (o) {
                     return o.type === 'distributionCentre';
                 });
-            },
+            }
+        },
 
-            filteredCards: function () {
+        methods: {
+            filterByDistributionCentre: function (distributionCentre) {
+                if (distributionCentre.data.code === '00000') return false;
+
                 let cards = _.filter(this.data.cards, function (o) {
-                    return (o.data.code).substring(0, 2) === ('00000').substring(0, 2);
+                    return (o.data.code).substring(0, 2) === (distributionCentre.data.code).substring(0, 2);
                 });
 
-                return _.orderBy(cards, ['data.code'], ['desc'])
-            },
+                return _.orderBy(cards, ['data.code'], ['desc']);
+            }
         }
     }
 </script>

@@ -18,7 +18,7 @@
 
     <!-- Distribution centre -->
     <div v-else class="card d-flex" style="background-color: #fed8b1;">
-        <div class="flex-grow-1 d-flex justify-content-center align-items-end text-uppercase">
+        <div class="distributionCentre flex-grow-1 d-flex justify-content-center align-items-end text-uppercase">
             <b>{{ card.data.name }}</b>
         </div>
         <div class="postcode py-2 align-self-center">
@@ -36,8 +36,8 @@
 
 <style scoped>
     .card {
-        width: 150px;
-        height: 200px;
+        width: 120px;
+        height: 170px;
         border: 1px solid gray;
         border-radius: 0.5em;
         -webkit-box-shadow: 0px 5px 5px -2px rgba(50, 50, 50, 0.2);
@@ -46,7 +46,7 @@
     }
 
     .address {
-        font-size: 85%;
+        font-size: 70%;
         border-top: 1px dotted gray;
         border-bottom: 1px dotted gray;
     }
@@ -59,7 +59,15 @@
         font-size: 60%;
     }
 
+    .distributionCentre {
+        font-size: 90%;
+    }
+
     .postcode {
         font-size: 100%;
+    }
+
+    .postcode > h2 {
+        font-size: 120%;
     }
 </style>
