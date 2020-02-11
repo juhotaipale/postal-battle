@@ -57,7 +57,7 @@ class GameController extends Controller
                 $postalCode = substr($key, 0, 2).$i;
                 $package = Package::create([
                     'code' => $postalCode,
-                    'type' => ['priority', 'economy', 'economy', 'economy'][rand(0, 3)],
+                    'type' => weightedRand(['economy' => 70, 'priority' => 30]),
                     'address' => $this->generateAddress($distributionCentre, $postalCode)
                 ]);
 

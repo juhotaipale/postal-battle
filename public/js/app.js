@@ -72313,7 +72313,8 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 
 /* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   state: {
-    data: {}
+    game: null,
+    players: []
   },
   mutations: {
     setDestination: function setDestination(state, payload) {

@@ -7,7 +7,8 @@ const _ = require('lodash');
 
 export default new Vuex.Store({
     state: {
-        data: {}
+        game: null,
+        players: [],
     },
 
     mutations: {
