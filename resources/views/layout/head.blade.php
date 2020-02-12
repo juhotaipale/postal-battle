@@ -8,6 +8,11 @@
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
     <script type="text/javascript" src="{{ asset('js/app.js') }}" defer></script>
+    @auth
+        <script>
+            window.USER = '{{ \Illuminate\Support\Facades\Auth::user()->id }}';
+        </script>
+    @endauth
 </head>
 <body>
     <div id="app">

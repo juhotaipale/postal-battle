@@ -7,33 +7,55 @@
             <placeholder v-for="card in distributionCentres" :key="card.id" class="mx-2" :cards="filterByDistributionCentre(card)"></placeholder>
         </div>
         <div class="hand py-4">
-            <hand :cards="data.cards"></hand>
+            <hand :cards="cards"></hand>
         </div>
     </div>
 </template>
 
 <script>
+    import { mapState, mapActions } from 'vuex';
+
     export default {
         name: "Game",
-        props: ['data'],
+        props: ['uuid'],
+        data() {
+            return {
+                loading: true,
+            }
+        },
         computed: {
+            ...mapState(['game', 'cards', 'players']),
+
             distributionCentres: function () {
-                return _.filter(this.data.cards, function (o) {
+                return _.filter(this.cards, function (o) {
                     return o.type === 'distributionCentre';
                 });
             }
         },
 
         methods: {
+            ...mapActions(['setGame']),
+
             filterByDistributionCentre: function (distributionCentre) {
                 if (distributionCentre.data.code === '00000') return false;
 
-                let cards = _.filter(this.data.cards, function (o) {
+                let cards = _.filter(this.cards, function (o) {
                     return (o.data.code).substring(0, 2) === (distributionCentre.data.code).substring(0, 2);
                 });
 
                 return _.orderBy(cards, ['data.code'], ['desc']);
             }
+        },
+
+        created() {
+            axios.get('/api/game/' + this.uuid)
+                .then(response => {
+                    this.setGame(response.data);
+                    this.loading = false;
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
         }
     }
 </script>

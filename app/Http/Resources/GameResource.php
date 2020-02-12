@@ -16,10 +16,11 @@ class GameResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'created_at' => $this->created_at,
             'started_at' => $this->started_at,
             'finished_at' => $this->finished_at,
-            'players' => PlayerResource::collection($this->players),
-            'cards' => CardResource::collection($this->cards),
+            'players' => PlayerResource::collection($this->whenLoaded('players')),
+            'cards' => CardResource::collection($this->whenLoaded('cards')),
         ];
     }
 }

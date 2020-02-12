@@ -7,7 +7,11 @@
                                style="top: 10px; right: 10px; cursor: pointer;" />
         </a>
 
-        <game :data="{{ json_encode($game) }}"></game>
+        @if (isset($game))
+            <game :uuid="{{ json_encode($game->id) }}"></game>
+        @else
+            <select-game :games="{{ json_encode($games) }}"></select-game>
+        @endif
     @endauth
 
     @guest

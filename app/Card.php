@@ -39,8 +39,8 @@ class Card extends Model
         return $this->hasOne(self::class, 'parent_id');
     }
 
-    public function player(): HasOne
+    public function player(): BelongsTo
     {
-        return $this->hasOne(Player::class);
+        return $this->belongsTo(Player::class);
     }
 }

@@ -10,22 +10,71 @@ use App\Http\Resources\GameResource;
 use App\Package;
 use Faker\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GameController extends Controller
 {
     protected $game = null;
 
-    public function show(Game $game)
+    public function index(Request $request)
     {
-        return response()->json(new GameResource($game));
+        $games = Game::query()
+            ->with('players')
+            ->without('cards')
+            ->where('finished_at', null)
+            ->orderBy('created_at')
+            ->get();
+
+        if ($request->is('api/*')) {
+            return response()->json(GameResource::collection($games));
+        }
+
+        return view('index', compact('games'));
     }
 
-    public function create()
+    public function show(Request $request, Game $game)
+    {
+        $game->loadMissing('players', 'cards');
+
+        if ($request->is('api/*')) {
+            return response()->json(new GameResource($game));
+        }
+
+        return view('index', compact('game'));
+    }
+
+    public function create(Request $request)
     {
         $this->game = Game::create();
         $this->generateCards();
 
-        return response()->json($this->game);
+        Auth::user()->game()->associate($this->game);
+        Auth::user()->save();
+
+        return $this->index($request);
+    }
+
+    public function join(Request $request, Game $game)
+    {
+        Auth::user()->game()->associate($game);
+        Auth::user()->save();
+
+        return $this->index($request);
+    }
+
+    public function begin(Game $game)
+    {
+        $cards = $game->cards->shuffle();
+        $players = $game->players;
+        $i = 0;
+
+        foreach ($cards as $card)
+        {
+            $card->player()->associate($players[$i]);
+            $card->save();
+
+            $i = ($i + 1 >= count($players) ? 0 : $i + 1);
+        }
     }
 
     protected function createCard($cardable, Card $previous = null): Card
