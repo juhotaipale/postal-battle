@@ -17,6 +17,12 @@ class GameController extends Controller
 {
     protected $game = null;
 
+    /**
+     * Show all the games.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
     public function index(Request $request)
     {
         $games = Game::query()
@@ -38,6 +44,13 @@ class GameController extends Controller
         return view('index', compact('games'));
     }
 
+    /**
+     * Show a game.
+     *
+     * @param Request $request
+     * @param Game $game
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
     public function show(Request $request, Game $game)
     {
         $game->loadMissing('players', 'cards');
@@ -49,6 +62,12 @@ class GameController extends Controller
         return view('index', compact('game'));
     }
 
+    /**
+     * Create a new game.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
     public function create(Request $request)
     {
         $this->game = Game::create();
@@ -60,6 +79,13 @@ class GameController extends Controller
         return $this->index($request);
     }
 
+    /**
+     * Join to game.
+     *
+     * @param Request $request
+     * @param Game $game
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
     public function join(Request $request, Game $game)
     {
         Auth::user()->game()->associate($game);
@@ -68,6 +94,12 @@ class GameController extends Controller
         return $this->index($request);
     }
 
+
+    /**
+     * Begin a game.
+     *
+     * @param Game $game
+     */
     public function begin(Game $game)
     {
         $cards = $game->cards->shuffle();
@@ -83,6 +115,13 @@ class GameController extends Controller
         }
     }
 
+    /**
+     * Create a card.
+     *
+     * @param $cardable
+     * @param Card|null $previous
+     * @return Card
+     */
     protected function createCard($cardable, Card $previous = null): Card
     {
         $card = new Card([
@@ -96,6 +135,11 @@ class GameController extends Controller
         return $card;
     }
 
+    /**
+     * Generate cards.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     protected function generateCards()
     {
         $previous = null;
@@ -125,6 +169,13 @@ class GameController extends Controller
         return response()->json([]);
     }
 
+    /**
+     * Generate an address for card.
+     *
+     * @param DistributionCentre $distributionCentre
+     * @param string $postalCode
+     * @return string
+     */
     protected function generateAddress(DistributionCentre $distributionCentre, string $postalCode)
     {
         $faker = Factory::create('fi_FI');
