@@ -11,6 +11,6 @@
 |
 */
 
-Broadcast::channel('global', function () {
-    return true;
+Broadcast::channel('game.{gameId}', function ($player, $gameId) {
+    return $player->game->id === $gameId;
 });

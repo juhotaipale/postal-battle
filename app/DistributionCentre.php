@@ -4,12 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Jamesh\Uuid\HasUuid;
 
 class DistributionCentre extends Model
 {
-    use HasUuid;
-
     public $timestamps = false;
 
     protected $fillable = [

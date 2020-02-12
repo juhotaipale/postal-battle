@@ -10,17 +10,21 @@ export default new Vuex.Store({
         game: null,
         cards: [],
         players: [],
+        ownCards: [],
     },
 
     mutations: {
         setGame(state, payload) {
-            state.game = payload.if;
-            state.cards = _.orderBy(payload.cards, function (o) { return o.data.code; }, ['asc']);
+            state.game = payload.id;
             state.players = payload.players;
+            state.cards = _.orderBy(payload.cards, function (o) { return o.data.code; }, ['asc']);
+            state.ownCards = _.orderBy(_.filter(payload.cards, function (o) { return o.player_id == USER }), function (o) {
+                return o.data.code;
+            }, ['asc']);
         },
 
         placeCard(state, payload) {
-            state.cards[_.indexOf(state.cards, payload)].on_table = true;
+            state.cards[_.indexOf(state.cards, payload)].table = true;
         },
     },
 

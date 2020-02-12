@@ -14,7 +14,7 @@ class CreateDistributionCentresTable extends Migration
     public function up()
     {
         Schema::create('distribution_centres', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->bigIncrements('id');
             $table->string('name');
             $table->char('code', 5);
         });

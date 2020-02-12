@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Card;
 use App\DistributionCentre;
+use App\Events\GameBegun;
 use App\Events\GameListUpdated;
+use App\Events\GameUpdated;
 use App\Game;
 use App\Helpers\Address;
 use App\Http\Resources\GameResource;
@@ -31,8 +33,6 @@ class GameController extends Controller
             ->where('finished_at', null)
             ->orderBy('created_at')
             ->get();
-
-        broadcast(new GameListUpdated([]))->toOthers();
 
         if ($request->is('api/*')) {
             $collection = GameResource::collection($games);
@@ -113,6 +113,21 @@ class GameController extends Controller
 
             $i = ($i + 1 >= count($players) ? 0 : $i + 1);
         }
+
+        $game->started_at = now();
+        $game->save();
+
+        broadcast(new GameBegun($game))->toOthers();
+    }
+
+    public function place(Game $game, Card $card)
+    {
+        $game->loadMissing('cards');
+
+        $card->player()->associate(null);
+        $card->save();
+
+        broadcast(new GameUpdated($game))->toOthers();
     }
 
     /**

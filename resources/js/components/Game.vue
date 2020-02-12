@@ -1,13 +1,22 @@
 <template>
-    <div class="game-container d-flex flex-column align-items-center justify-content-center">
-        <div class="status py-4">
-            <h2>POSTAL BATTLE</h2>
+    <div class="game-container d-flex flex-column align-items-center">
+        <div class="status w-100 pt-4 align-self-baseline">
+            <div class="container">
+                <div class="row">
+                    <div class="col-6">
+                        <h2>POSTAL BATTLE</h2>
+                    </div>
+                    <div class="col-6">
+                        <h2>IT'S YOUR TURN</h2>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="distribution-centres d-flex flex-row flex-grow-1 align-items-end mb-5 pb-5">
+        <div class="distribution-centres d-flex flex-row align-items-end mb-5" style="height: 500px;">
             <placeholder v-for="card in distributionCentres" :key="card.id" class="mx-2" :cards="filterByDistributionCentre(card)"></placeholder>
         </div>
-        <div class="hand py-4">
-            <hand :cards="cards"></hand>
+        <div class="hand mb-4" style="height: 350px;">
+            <hand></hand>
         </div>
     </div>
 </template>
@@ -53,6 +62,18 @@
                 })
                 .catch(error => {
                     alert(error.message);
+                });
+
+            Echo.private('game.' + this.uuid)
+                .listen('.updated', (e) => {
+                    axios.get('/api/game/' + this.uuid)
+                        .then(response => {
+                            this.setGame(response.data);
+                            this.loading = false;
+                        })
+                        .catch(error => {
+                            alert(error.message);
+                        });
                 });
         }
     }

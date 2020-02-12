@@ -26,6 +26,11 @@
         },
         created() {
             this.gameList = this.games;
+
+            Echo.channel('games')
+                .listen('.updated', (e) => {
+                    this.gameList = e.games;
+                });
         }
     }
 </script>

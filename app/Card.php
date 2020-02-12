@@ -10,8 +10,6 @@ use Jamesh\Uuid\HasUuid;
 
 class Card extends Model
 {
-    use HasUuid;
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -21,7 +19,7 @@ class Card extends Model
 
     public function getOnTableAttribute(): bool
     {
-        return $this->id === '423be831-7c68-4a9e-9542-c5feea7810f4' || ($this->game->started_at && !$this->player);
+        return $this->game->started_at && !$this->player;
     }
 
     public function game(): BelongsTo

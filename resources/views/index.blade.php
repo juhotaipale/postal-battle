@@ -4,7 +4,7 @@
     @auth
         <a href="{{ route('logout') }}">
             <font-awesome-icon icon="times-circle" size="3x" title="Exit game" class="position-absolute"
-                               style="top: 10px; right: 10px; cursor: pointer;" />
+                               style="top: 15px; right: 15px; cursor: pointer;" />
         </a>
 
         @if (isset($game))

@@ -18,7 +18,8 @@ class CardResource extends JsonResource
         return [
             'id' => $this->id,
             'parent_id' => $this->parent_id,
-            'on_table' => $this->on_table,
+            'player_id' => $this->player_id,
+            'table' => $this->on_table,
             'type' => $this->cardable_type === Package::class ? 'package' : 'distributionCentre',
             'data' => $this->cardable_type === Package::class
                 ? new PackageResource($this->cardable)

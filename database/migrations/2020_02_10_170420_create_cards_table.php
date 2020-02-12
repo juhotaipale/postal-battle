@@ -14,11 +14,11 @@ class CreateCardsTable extends Migration
     public function up()
     {
         Schema::create('cards', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->bigIncrements('id');
             $table->uuid('game_id');
-            $table->uuid('player_id')->nullable();
-            $table->uuid('parent_id')->nullable();
-            $table->uuidMorphs('cardable');
+            $table->unsignedBigInteger('player_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->morphs('cardable');
         });
     }
 

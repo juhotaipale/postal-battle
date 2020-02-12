@@ -21,4 +21,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('game/{game}', 'GameController@show');
     Route::post('game/{game}/join', 'GameController@join');
     Route::post('game/{game}/begin', 'GameController@begin');
+    Route::post('game/{game}/place/{card}', 'GameController@place');
 });

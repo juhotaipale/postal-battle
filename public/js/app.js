@@ -11714,7 +11714,7 @@ __webpack_require__.r(__webpack_exports__);
 
         case '33000':
         case '40000':
-        case '53100':
+        case '53000':
           return this.color.blue;
 
         default:
@@ -11742,6 +11742,15 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -11790,6 +11799,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _this.loading = false;
     })["catch"](function (error) {
       alert(error.message);
+    });
+    Echo["private"]('game.' + this.uuid).listen('.updated', function (e) {
+      axios.get('/api/game/' + _this.uuid).then(function (response) {
+        _this.setGame(response.data);
+
+        _this.loading = false;
+      })["catch"](function (error) {
+        alert(error.message);
+      });
     });
   }
 });
@@ -11852,7 +11870,7 @@ __webpack_require__.r(__webpack_exports__);
       var found = false;
 
       _.each(this.game.players, function (player) {
-        found = player.id == USER;
+        if (player.id == USER) found = true;
       });
 
       return found;
@@ -11904,8 +11922,13 @@ __webpack_require__.r(__webpack_exports__);
           _this2.loading = false;
         });
       }
-    },
-    begin: function begin() {//
+    }
+  },
+  created: function created() {
+    if (this.game) {
+      Echo["private"]('game.' + this.game.id).listen('.begun', function (e) {
+        window.location.href = '/game/' + e.game;
+      });
     }
   }
 });
@@ -11942,41 +11965,71 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Hand",
-  props: ['cards'],
   data: function data() {
     return {
       selected: null
     };
   },
-  computed: {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['cards', 'ownCards']), {
     cardsInHand: function cardsInHand() {
-      return _.filter(this.cards, function (o) {
-        return !o.on_table;
+      return _.filter(this.ownCards, function (o) {
+        return !o.table;
       });
     }
-  },
+  }),
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['placeCard']), {
     select: function select(index) {
       this.selected = index;
     },
     place: function place(card) {
-      var allowed = _.find(this.cards, function (o) {
-        return o.id === card.parent_id && o.on_table;
-      });
+      var _this = this;
 
-      if (allowed || card.parent_id === null) {
-        this.placeCard(card);
+      var allowed = false;
+
+      if (!card.parent_id) {
+        switch (card.data.code) {
+          case '00000':
+            allowed = true;
+            break;
+
+          case '33000':
+          case '40000':
+          case '53000':
+            allowed = _.filter(this.cards, function (o) {
+              return o.table === true && o.data.code === '00000';
+            }).length === 1;
+            break;
+
+          default:
+            allowed = _.filter(this.cards, function (o) {
+              return o.table === true && _.includes(['33000', '40000', '53000'], o.data.code);
+            }).length === 3;
+            break;
+        }
       } else {
-        console.log(this.$refs[card.id]);
-        this.$refs[card.id].$el.classList.add('blinker');
+        allowed = _.find(this.cards, function (o) {
+          return o.id === card.parent_id && o.table;
+        });
+      }
+
+      if (allowed) {
+        this.placeCard(card);
+        axios.post('/api/game/' + this.$parent.uuid + '/place/' + card.id)["catch"](function (error) {
+          alert(error.message);
+        });
+      } else {
+        this.$refs[card.id][0].$el.classList.add('blinker');
+        setTimeout(function () {
+          _this.$refs[card.id][0].$el.classList.remove('blinker');
+        }, 500);
       }
     }
   }),
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     document.addEventListener('keyup', function (e) {
-      if (e.code === "ArrowLeft") _this.select(Math.max(0, _this.selected - 1));else if (e.code === "ArrowRight") _this.select(Math.min(_this.cardsInHand.length - 1, _this.selected + 1));else if (e.code === "Enter") _this.place(_this.cardsInHand[_this.selected]);
+      if (e.code === "ArrowLeft") _this2.select(Math.max(0, _this2.selected - 1));else if (e.code === "ArrowRight") _this2.select(Math.min(_this2.cardsInHand.length - 1, _this2.selected + 1));else if (e.code === "Enter") _this2.place(_this2.cardsInHand[_this2.selected]);
     });
   }
 });
@@ -12081,7 +12134,7 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     cardsOnStack: function cardsOnStack() {
       return _.filter(this.cards, function (o) {
-        return o.on_table;
+        return o.table;
       });
     }
   }
@@ -12171,7 +12224,12 @@ __webpack_require__.r(__webpack_exports__);
   methods: {//
   },
   created: function created() {
+    var _this = this;
+
     this.gameList = this.games;
+    Echo.channel('games').listen('.updated', function (e) {
+      _this.gameList = e.games;
+    });
   }
 });
 
@@ -18743,7 +18801,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.selected[data-v-b897304c] {\n    z-index: 1000 !important;\n    margin-top: -10px;\n}\n.blinker[data-v-b897304c] {\n    -webkit-animation: blink-data-v-b897304c .1s step-end 5 alternate;\n            animation: blink-data-v-b897304c .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n@keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n", ""]);
+exports.push([module.i, "\n.selected[data-v-b897304c] {\n    z-index: 1000 !important;\n    margin-top: -10px !important;\n}\n.blinker[data-v-b897304c] {\n    -webkit-animation: blink-data-v-b897304c .1s step-end 5 alternate;\n            animation: blink-data-v-b897304c .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n@keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n", ""]);
 
 // exports
 
@@ -58432,10 +58490,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    {
-      staticClass:
-        "game-container d-flex flex-column align-items-center justify-content-center"
-    },
+    { staticClass: "game-container d-flex flex-column align-items-center" },
     [
       _vm._m(0),
       _vm._v(" "),
@@ -58443,7 +58498,8 @@ var render = function() {
         "div",
         {
           staticClass:
-            "distribution-centres d-flex flex-row flex-grow-1 align-items-end mb-5 pb-5"
+            "distribution-centres d-flex flex-row align-items-end mb-5",
+          staticStyle: { height: "500px" }
         },
         _vm._l(_vm.distributionCentres, function(card) {
           return _c("placeholder", {
@@ -58457,8 +58513,8 @@ var render = function() {
       _vm._v(" "),
       _c(
         "div",
-        { staticClass: "hand py-4" },
-        [_c("hand", { attrs: { cards: _vm.cards } })],
+        { staticClass: "hand mb-4", staticStyle: { height: "350px" } },
+        [_c("hand")],
         1
       )
     ]
@@ -58469,8 +58525,18 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "status py-4" }, [
-      _c("h2", [_vm._v("POSTAL BATTLE")])
+    return _c("div", { staticClass: "status w-100 pt-4 align-self-baseline" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-6" }, [
+            _c("h2", [_vm._v("POSTAL BATTLE")])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-6" }, [
+            _c("h2", [_vm._v("IT'S YOUR TURN")])
+          ])
+        ])
+      ])
     ])
   }
 ]
@@ -58583,7 +58649,11 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "d-flex flex-row mb-5", staticStyle: { height: "170px" } },
+    {
+      staticClass:
+        "d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center",
+      staticStyle: { width: "90vw", height: "100%" }
+    },
     [
       _vm.cardsInHand.length === 0 && _vm.selected !== null
         ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
@@ -58596,6 +58666,7 @@ var render = function() {
           key: card.id,
           ref: card.id,
           refInFor: true,
+          staticClass: "my-2",
           class: { selected: index === _vm.selected },
           staticStyle: { "margin-left": "-35px", "margin-right": "-35px" },
           style: { zIndex: index > _vm.selected ? 100 - index : 100 + index },
@@ -58779,7 +58850,7 @@ var render = function() {
           "div",
           { staticClass: "d-flex flex-column" },
           _vm._l(_vm.cards, function(card, index) {
-            return card.on_table
+            return card.table
               ? _c("card", {
                   key: index,
                   class: {
@@ -72994,18 +73065,24 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
   state: {
     game: null,
     cards: [],
-    players: []
+    players: [],
+    ownCards: []
   },
   mutations: {
     setGame: function setGame(state, payload) {
-      state.game = payload["if"];
+      state.game = payload.id;
+      state.players = payload.players;
       state.cards = _.orderBy(payload.cards, function (o) {
         return o.data.code;
       }, ['asc']);
-      state.players = payload.players;
+      state.ownCards = _.orderBy(_.filter(payload.cards, function (o) {
+        return o.player_id == USER;
+      }), function (o) {
+        return o.data.code;
+      }, ['asc']);
     },
     placeCard: function placeCard(state, payload) {
-      state.cards[_.indexOf(state.cards, payload)].on_table = true;
+      state.cards[_.indexOf(state.cards, payload)].table = true;
     }
   },
   actions: {

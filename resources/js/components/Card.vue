@@ -47,7 +47,7 @@
                         return this.color.orange;
                     case '33000':
                     case '40000':
-                    case '53100':
+                    case '53000':
                         return this.color.blue;
                     default:
                         return this.color.green;

@@ -46,7 +46,7 @@
                 let found = false;
 
                 _.each(this.game.players, function (player) {
-                    found = player.id == USER;
+                    if (player.id == USER) found = true;
                 });
 
                 return found;
@@ -105,12 +105,17 @@
                             this.loading = false;
                         });
                 }
-            },
-
-            begin: function () {
-                //
             }
         },
+
+        created() {
+            if (this.game) {
+                Echo.private('game.' + this.game.id)
+                    .listen('.begun', (e) => {
+                        window.location.href = '/game/' + e.game;
+                    });
+            }
+        }
     }
 </script>
 

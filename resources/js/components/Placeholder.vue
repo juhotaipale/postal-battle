@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="cardsOnStack.length > 0" class="d-flex flex-column">
-            <card v-if="card.on_table" v-for="(card, index) in cards" :key="index" :class="{firstMargin: index < cards.length - 1, lastMargin: index === cards.length - 1 }"
+            <card v-if="card.table" v-for="(card, index) in cards" :key="index" :class="{firstMargin: index < cards.length - 1, lastMargin: index === cards.length - 1 }"
                   :style="{ zIndex: 100 - index }" :card="card"></card>
         </div>
         <div v-else class="lastMargin placeholder"></div>
@@ -15,7 +15,7 @@
         computed: {
             cardsOnStack: function () {
                 return _.filter(this.cards, function (o) {
-                    return o.on_table;
+                    return o.table;
                 });
             },
         }
