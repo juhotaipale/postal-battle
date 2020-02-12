@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="hasCards" class="d-flex flex-column">
+        <div v-if="cardsOnStack.length > 0" class="d-flex flex-column">
             <card v-if="card.on_table" v-for="(card, index) in cards" :key="index" :class="{firstMargin: index < cards.length - 1, lastMargin: index === cards.length - 1 }"
                   :style="{ zIndex: 100 - index }" :card="card"></card>
         </div>
@@ -13,11 +13,11 @@
         name: "Placeholder",
         props: ['cards'],
         computed: {
-            hasCards: function () {
+            cardsOnStack: function () {
                 return _.filter(this.cards, function (o) {
                     return o.on_table;
-                }).length > 0;
-            }
+                });
+            },
         }
     }
 </script>
@@ -29,8 +29,8 @@
     }
 
     .lastMargin {
-        margin-top: -15px;
-        margin-bottom: -15px;
+        margin-top: -15px !important;
+        margin-bottom: -15px !important;
     }
 
     .placeholder {

@@ -11896,6 +11896,13 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -11904,6 +11911,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Hand",
   props: ['cards'],
@@ -11912,18 +11920,30 @@ __webpack_require__.r(__webpack_exports__);
       selected: 8
     };
   },
-  methods: {
+  computed: {
+    cardsInHand: function cardsInHand() {
+      return _.filter(this.cards, function (o) {
+        return !o.on_table;
+      });
+    }
+  },
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['placeCard']), {
     select: function select(index) {
       this.selected = index;
     },
-    place: function place(index) {//
+    place: function place(card) {
+      var allowed = _.find(this.cards, function (o) {
+        return o.id === card.parent_id && o.on_table;
+      });
+
+      if (allowed || card.parent_id === null) this.placeCard(card);else alert('This card can\'t be placed.');
     }
-  },
+  }),
   mounted: function mounted() {
     var _this = this;
 
     document.addEventListener('keyup', function (e) {
-      if (e.code === "ArrowLeft") _this.select(Math.max(1, _this.selected - 1));else if (e.code === "ArrowRight") _this.select(Math.min(14, _this.selected + 1));else if (e.code === "Enter") _this.place(_this.selected);
+      if (e.code === "ArrowLeft") _this.select(Math.max(1, _this.selected - 1));else if (e.code === "ArrowRight") _this.select(Math.min(14, _this.selected + 1));else if (e.code === "Enter") _this.place(_this.cardsInHand[_this.selected]);
     });
   }
 });
@@ -12026,10 +12046,10 @@ __webpack_require__.r(__webpack_exports__);
   name: "Placeholder",
   props: ['cards'],
   computed: {
-    hasCards: function hasCards() {
+    cardsOnStack: function cardsOnStack() {
       return _.filter(this.cards, function (o) {
         return o.on_table;
-      }).length > 0;
+      });
     }
   }
 });
@@ -18728,7 +18748,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.firstMargin[data-v-52f58ed8] {\n    margin-top: -70px;\n    margin-bottom: -70px;\n}\n.lastMargin[data-v-52f58ed8] {\n    margin-top: -15px;\n    margin-bottom: -15px;\n}\n.placeholder[data-v-52f58ed8] {\n    width: 120px;\n    height: 170px;\n    border: 2px dashed gray;\n    border-radius: 0.5em;\n}\n", ""]);
+exports.push([module.i, "\n.firstMargin[data-v-52f58ed8] {\n    margin-top: -70px;\n    margin-bottom: -70px;\n}\n.lastMargin[data-v-52f58ed8] {\n    margin-top: -15px !important;\n    margin-bottom: -15px !important;\n}\n.placeholder[data-v-52f58ed8] {\n    width: 120px;\n    height: 170px;\n    border: 2px dashed gray;\n    border-radius: 0.5em;\n}\n", ""]);
 
 // exports
 
@@ -58531,7 +58551,7 @@ var render = function() {
   return _c(
     "div",
     { staticClass: "d-flex flex-row mb-5" },
-    _vm._l(_vm.cards, function(card, index) {
+    _vm._l(_vm.cardsInHand, function(card, index) {
       return _c("card", {
         key: card.id,
         class: { selected: index === _vm.selected },
@@ -58711,7 +58731,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm.hasCards
+    _vm.cardsOnStack.length > 0
       ? _c(
           "div",
           { staticClass: "d-flex flex-column" },
@@ -72940,11 +72960,17 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
         return o.data.code;
       }, ['asc']);
       state.players = payload.players;
+    },
+    placeCard: function placeCard(state, payload) {
+      state.cards[_.indexOf(state.cards, payload)].on_table = true;
     }
   },
   actions: {
     setGame: function setGame(context, payload) {
       context.commit('setGame', payload);
+    },
+    placeCard: function placeCard(context, payload) {
+      context.commit('placeCard', payload);
     }
   }
 }));

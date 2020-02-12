@@ -18,11 +18,19 @@ export default new Vuex.Store({
             state.cards = _.orderBy(payload.cards, function (o) { return o.data.code; }, ['asc']);
             state.players = payload.players;
         },
+
+        placeCard(state, payload) {
+            state.cards[_.indexOf(state.cards, payload)].on_table = true;
+        },
     },
 
     actions: {
         setGame(context, payload) {
             context.commit('setGame', payload);
         },
+
+        placeCard(context, payload) {
+            context.commit('placeCard', payload);
+        }
     }
 });
