@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Card;
 use App\DistributionCentre;
+use App\Events\GameListUpdated;
 use App\Game;
 use App\Helpers\Address;
 use App\Http\Resources\GameResource;
@@ -25,8 +26,13 @@ class GameController extends Controller
             ->orderBy('created_at')
             ->get();
 
+        broadcast(new GameListUpdated([]))->toOthers();
+
         if ($request->is('api/*')) {
-            return response()->json(GameResource::collection($games));
+            $collection = GameResource::collection($games);
+            broadcast(new GameListUpdated($collection))->toOthers();
+
+            return response()->json(GameResource::collection($collection));
         }
 
         return view('index', compact('games'));

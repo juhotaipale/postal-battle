@@ -17,7 +17,7 @@
     </div>
 
     <!-- Distribution centre -->
-    <div v-else class="card d-flex" style="background-color: #fed8b1;">
+    <div v-else class="card d-flex" :style="{ backgroundColor: getColor(card.data.code) }">
         <div class="distributionCentre flex-grow-1 d-flex justify-content-center align-items-end text-uppercase">
             <b>{{ card.data.name }}</b>
         </div>
@@ -30,7 +30,30 @@
 <script>
     export default {
         name: "Card",
-        props: ['card']
+        props: ['card'],
+        data() {
+            return {
+                color: {
+                    orange: '#fed8b1',
+                    blue: '#b4d9fe',
+                    green: '#c6feb4',
+                }
+            }
+        },
+        methods: {
+            getColor(postalCode) {
+                switch (postalCode) {
+                    case '00000':
+                        return this.color.orange;
+                    case '33000':
+                    case '40000':
+                    case '53100':
+                        return this.color.blue;
+                    default:
+                        return this.color.green;
+                }
+            }
+        }
     }
 </script>
 

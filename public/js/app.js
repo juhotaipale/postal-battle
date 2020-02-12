@@ -11696,7 +11696,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Card",
-  props: ['card']
+  props: ['card'],
+  data: function data() {
+    return {
+      color: {
+        orange: '#fed8b1',
+        blue: '#b4d9fe',
+        green: '#c6feb4'
+      }
+    };
+  },
+  methods: {
+    getColor: function getColor(postalCode) {
+      switch (postalCode) {
+        case '00000':
+          return this.color.orange;
+
+        case '33000':
+        case '40000':
+        case '53100':
+          return this.color.blue;
+
+        default:
+          return this.color.green;
+      }
+    }
+  }
 });
 
 /***/ }),
@@ -11911,13 +11936,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Hand",
   props: ['cards'],
   data: function data() {
     return {
-      selected: 8
+      selected: null
     };
   },
   computed: {
@@ -11936,14 +11964,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return o.id === card.parent_id && o.on_table;
       });
 
-      if (allowed || card.parent_id === null) this.placeCard(card);else alert('This card can\'t be placed.');
+      if (allowed || card.parent_id === null) {
+        this.placeCard(card);
+      } else {
+        console.log(this.$refs[card.id]);
+        this.$refs[card.id].$el.classList.add('blinker');
+      }
     }
   }),
   mounted: function mounted() {
     var _this = this;
 
     document.addEventListener('keyup', function (e) {
-      if (e.code === "ArrowLeft") _this.select(Math.max(1, _this.selected - 1));else if (e.code === "ArrowRight") _this.select(Math.min(14, _this.selected + 1));else if (e.code === "Enter") _this.place(_this.cardsInHand[_this.selected]);
+      if (e.code === "ArrowLeft") _this.select(Math.max(0, _this.selected - 1));else if (e.code === "ArrowRight") _this.select(Math.min(_this.cardsInHand.length - 1, _this.selected + 1));else if (e.code === "Enter") _this.place(_this.cardsInHand[_this.selected]);
     });
   }
 });
@@ -18710,7 +18743,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.selected[data-v-b897304c] {\n    z-index: 1000 !important;\n    margin-top: -10px;\n}\n", ""]);
+exports.push([module.i, "\n.selected[data-v-b897304c] {\n    z-index: 1000 !important;\n    margin-top: -10px;\n}\n.blinker[data-v-b897304c] {\n    -webkit-animation: blink-data-v-b897304c .1s step-end 5 alternate;\n            animation: blink-data-v-b897304c .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n@keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n", ""]);
 
 // exports
 
@@ -58357,7 +58390,7 @@ var render = function() {
         "div",
         {
           staticClass: "card d-flex",
-          staticStyle: { "background-color": "#fed8b1" }
+          style: { backgroundColor: _vm.getColor(_vm.card.data.code) }
         },
         [
           _c(
@@ -58550,22 +58583,32 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "d-flex flex-row mb-5" },
-    _vm._l(_vm.cardsInHand, function(card, index) {
-      return _c("card", {
-        key: card.id,
-        class: { selected: index === _vm.selected },
-        staticStyle: { "margin-left": "-35px", "margin-right": "-35px" },
-        style: { zIndex: index > _vm.selected ? 100 - index : 100 + index },
-        attrs: { card: card },
-        nativeOn: {
-          click: function($event) {
-            return _vm.select(index)
+    { staticClass: "d-flex flex-row mb-5", staticStyle: { height: "170px" } },
+    [
+      _vm.cardsInHand.length === 0 && _vm.selected !== null
+        ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
+            _vm._v("\n        You are the winner\n    ")
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm._l(_vm.cardsInHand, function(card, index) {
+        return _c("card", {
+          key: card.id,
+          ref: card.id,
+          refInFor: true,
+          class: { selected: index === _vm.selected },
+          staticStyle: { "margin-left": "-35px", "margin-right": "-35px" },
+          style: { zIndex: index > _vm.selected ? 100 - index : 100 + index },
+          attrs: { card: card },
+          nativeOn: {
+            click: function($event) {
+              return _vm.select(index)
+            }
           }
-        }
+        })
       })
-    }),
-    1
+    ],
+    2
   )
 }
 var staticRenderFns = []
