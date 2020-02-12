@@ -11749,8 +11749,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   }),
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['setGame']), {
     filterByDistributionCentre: function filterByDistributionCentre(distributionCentre) {
-      if (distributionCentre.data.code === '00000') return false;
-
       var cards = _.filter(this.cards, function (o) {
         return o.data.code.substring(0, 2) === distributionCentre.data.code.substring(0, 2);
       });
@@ -11917,14 +11915,15 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     select: function select(index) {
       this.selected = index;
-      this.cards[index].data.code = '33550';
+    },
+    place: function place(index) {//
     }
   },
   mounted: function mounted() {
     var _this = this;
 
     document.addEventListener('keyup', function (e) {
-      if (e.code === "ArrowLeft") _this.select(Math.max(1, _this.selected - 1));else if (e.code === "ArrowRight") _this.select(Math.min(14, _this.selected + 1));
+      if (e.code === "ArrowLeft") _this.select(Math.max(1, _this.selected - 1));else if (e.code === "ArrowRight") _this.select(Math.min(14, _this.selected + 1));else if (e.code === "Enter") _this.place(_this.selected);
     });
   }
 });
@@ -12025,7 +12024,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Placeholder",
-  props: ['cards']
+  props: ['cards'],
+  computed: {
+    hasCards: function hasCards() {
+      return _.filter(this.cards, function (o) {
+        return o.on_table;
+      }).length > 0;
+    }
+  }
 });
 
 /***/ }),
@@ -58705,20 +58711,22 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm.cards.length > 0
+    _vm.hasCards
       ? _c(
           "div",
           { staticClass: "d-flex flex-column" },
           _vm._l(_vm.cards, function(card, index) {
-            return _c("card", {
-              key: index,
-              class: {
-                firstMargin: index < _vm.cards.length - 1,
-                lastMargin: index === _vm.cards.length - 1
-              },
-              style: { zIndex: 100 - index },
-              attrs: { card: card }
-            })
+            return card.on_table
+              ? _c("card", {
+                  key: index,
+                  class: {
+                    firstMargin: index < _vm.cards.length - 1,
+                    lastMargin: index === _vm.cards.length - 1
+                  },
+                  style: { zIndex: 100 - index },
+                  attrs: { card: card }
+                })
+              : _vm._e()
           }),
           1
         )
@@ -72928,7 +72936,9 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
   mutations: {
     setGame: function setGame(state, payload) {
       state.game = payload["if"];
-      state.cards = payload.cards;
+      state.cards = _.orderBy(payload.cards, function (o) {
+        return o.data.code;
+      }, ['asc']);
       state.players = payload.players;
     }
   },

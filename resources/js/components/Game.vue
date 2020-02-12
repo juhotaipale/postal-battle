@@ -37,8 +37,6 @@
             ...mapActions(['setGame']),
 
             filterByDistributionCentre: function (distributionCentre) {
-                if (distributionCentre.data.code === '00000') return false;
-
                 let cards = _.filter(this.cards, function (o) {
                     return (o.data.code).substring(0, 2) === (distributionCentre.data.code).substring(0, 2);
                 });

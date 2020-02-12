@@ -15,7 +15,7 @@ export default new Vuex.Store({
     mutations: {
         setGame(state, payload) {
             state.game = payload.if;
-            state.cards = payload.cards;
+            state.cards = _.orderBy(payload.cards, function (o) { return o.data.code; }, ['asc']);
             state.players = payload.players;
         },
     },
