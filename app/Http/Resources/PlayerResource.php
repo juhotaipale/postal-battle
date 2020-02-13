@@ -18,6 +18,7 @@ class PlayerResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'turn' => $this->turn,
+            'skip' => $this->skipTurn,
         ];
     }
 }

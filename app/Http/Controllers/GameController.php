@@ -135,10 +135,21 @@ class GameController extends Controller
         $game->loadMissing('cards', 'players');
 
         foreach ($game->players as $player) {
-            if (count($player->cards) === 0) $game->finished_at = now();
+            if (count($player->cards) === 0) {
+                $game->finished_at = now();
+
+                foreach ($game->players as $player) {
+                    $player->game()->associate(null);
+                    $player->save();
+                }
+
+                break;
+            }
         }
 
-        if (! $game->finished_at) {
+        $game->previous_player_id = $game->turn_player_id;
+
+        if (!$game->finished_at && substr($card->cardable->code, 2) != '600') {
             $next = $game->players()->pluck('id')->search($game->turn_player_id) + 1;
             $next = ($next >= count($game->players) ? 0 : $next);
             $game->turn_player_id = $game->players[$next]->id;
@@ -167,11 +178,23 @@ class GameController extends Controller
 
         $next = $game->players()->pluck('id')->search($game->turn_player_id) + 1;
         $next = ($next >= count($game->players) ? 0 : $next);
+        $game->previous_player_id = $game->turn_player_id;
         $game->turn_player_id = $game->players[$next]->id;
         $game->save();
 
         broadcast(new GameUpdated($game))->toOthers();
         return new CardResource($card);
+    }
+
+    public function skipTurn(Game $game)
+    {
+        $next = $game->players()->pluck('id')->search($game->turn_player_id) + 1;
+        $next = ($next >= count($game->players) ? 0 : $next);
+        $game->previous_player_id = $game->turn_player_id;
+        $game->turn_player_id = $game->players[$next]->id;
+        $game->save();
+
+        broadcast(new GameUpdated($game))->toOthers();
     }
 
     /**

@@ -2,10 +2,10 @@
 @section('content')
 
     @auth
-        <a href="{{ route('logout') }}">
-            <font-awesome-icon icon="times-circle" size="3x" title="Exit game" class="position-absolute"
-                               style="top: 15px; right: 15px; cursor: pointer;" />
-        </a>
+        <div class="position-absolute text-right" style="top: 35px; right: 30px;">
+            Player: <b>{{ \Illuminate\Support\Facades\Auth::user()->name }}</b><br />
+            <a href="{{ route('logout') }}">End session</a>
+        </div>
 
         @if (isset($game))
             <game :uuid="{{ json_encode($game->id) }}"></game>

@@ -23,4 +23,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('game/{game}/begin', 'GameController@begin');
     Route::post('game/{game}/place/{card}', 'GameController@place');
     Route::post('game/{game}/getCard', 'GameController@getCard');
+    Route::post('game/{game}/skip', 'GameController@skipTurn');
 });

@@ -26,10 +26,10 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
  */
 
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faCircleNotch, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faTimesCircle, faCrown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add(faCircleNotch, faTimesCircle);
+library.add(faCircleNotch, faTimesCircle, faCrown);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.config.productionTip = false;
 

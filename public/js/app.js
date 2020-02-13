@@ -12035,6 +12035,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Hand",
@@ -12053,7 +12061,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     myTurn: function myTurn() {
       return this.turn.id == USER;
     },
-    canPlaceAnything: function canPlaceAnything() {
+    canPlaceCard: function canPlaceCard() {
       var _this = this;
 
       var can = false;
@@ -12094,6 +12102,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['placeCard', 'rotateTurn', 'appendCard']), {
     select: function select(index) {
       this.selected = index;
+    },
+    skipTurn: function skipTurn() {
+      this.rotateTurn();
+      axios.post('/api/game/' + this.$parent.uuid + '/skip')["catch"](function (error) {
+        alert(error.message);
+      });
     },
     getCard: function getCard() {
       var _this2 = this;
@@ -12141,7 +12155,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (allowed) {
           this.placeCard(card);
-          this.rotateTurn();
+
+          if (card.data.code.substring(2) != '600') {
+            this.rotateTurn();
+          } else {
+            this.$store.state.turn.skip = true;
+          }
+
           axios.post('/api/game/' + this.$parent.uuid + '/place/' + card.id)["catch"](function (error) {
             alert(error.message);
           });
@@ -12263,6 +12283,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -18946,7 +18967,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.selected[data-v-b897304c] {\n    z-index: 1000 !important;\n    margin-top: -10px !important;\n}\n.getCard[data-v-b897304c]:hover {\n    text-decoration: underline;\n    cursor: pointer;\n}\n.blinker[data-v-b897304c] {\n    -webkit-animation: blink-data-v-b897304c .1s step-end 5 alternate;\n            animation: blink-data-v-b897304c .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n@keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n", ""]);
+exports.push([module.i, "\n.selected[data-v-b897304c] {\n    z-index: 1000 !important;\n    margin-top: -10px !important;\n}\n.hover[data-v-b897304c]:hover {\n    text-decoration: underline;\n    cursor: pointer;\n}\n.blinker[data-v-b897304c] {\n    -webkit-animation: blink-data-v-b897304c .1s step-end 5 alternate;\n            animation: blink-data-v-b897304c .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n@keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n", ""]);
 
 // exports
 
@@ -18984,7 +19005,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.firstMargin[data-v-52f58ed8] {\n    margin-top: -70px;\n    margin-bottom: -70px;\n}\n.lastMargin[data-v-52f58ed8] {\n    margin-top: -15px !important;\n    margin-bottom: -15px !important;\n}\n.placeholder[data-v-52f58ed8] {\n    width: 120px;\n    height: 170px;\n    border: 2px dashed gray;\n    border-radius: 0.5em;\n}\n", ""]);
+exports.push([module.i, "\n.firstMargin[data-v-52f58ed8] {\n    margin-top: -70px;\n    margin-bottom: -70px;\n}\n.lastMargin[data-v-52f58ed8] {\n    margin-top: -15px !important;\n    margin-bottom: -15px !important;\n}\n.crown[data-v-52f58ed8] {\n    margin-bottom: 80px;\n    margin-left: 32px;\n    color: #f2bf13;\n}\n.placeholder[data-v-52f58ed8] {\n    width: 120px;\n    height: 170px;\n    border: 2px dashed gray;\n    border-radius: 0.5em;\n}\n", ""]);
 
 // exports
 
@@ -59549,32 +59570,47 @@ var render = function() {
   return _c(
     "div",
     {
-      staticClass: "d-flex flex-column align-items-center",
+      staticClass:
+        "d-flex flex-column align-items-center justify-content-center",
       staticStyle: { width: "90vw", height: "100%" }
     },
     [
-      _c("div", { staticStyle: { height: "40px" } }, [
-        _vm.game && _vm.myTurn && !_vm.canPlaceAnything
-          ? _c(
-              "h4",
-              {
-                staticClass: "text-uppercase getCard",
-                on: { click: _vm.getCard }
-              },
-              [
-                _vm.getCardLoading
-                  ? _c(
-                      "span",
-                      [
-                        _c("font-awesome-icon", {
-                          attrs: { icon: "circle-notch", spin: "" }
-                        })
-                      ],
-                      1
-                    )
-                  : _c("span", [_vm._v("Get a card from previous player")])
-              ]
-            )
+      _c("div", { staticClass: "pb-2" }, [
+        _vm.game && !_vm.game.finished_at && _vm.myTurn
+          ? _c("h4", [
+              !_vm.canPlaceCard
+                ? _c("span", { staticClass: "text-uppercase hover" }, [
+                    _vm.getCardLoading
+                      ? _c(
+                          "span",
+                          [
+                            _c("font-awesome-icon", {
+                              attrs: { icon: "circle-notch", spin: "" }
+                            })
+                          ],
+                          1
+                        )
+                      : _c("span", { on: { click: _vm.getCard } }, [
+                          _vm._v("Get a card from previous player")
+                        ])
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              !_vm.canPlaceCard && _vm.turn.skip
+                ? _c("span", [_vm._v(" or ")])
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.turn.skip
+                ? _c(
+                    "span",
+                    {
+                      staticClass: "text-uppercase hover",
+                      on: { click: _vm.skipTurn }
+                    },
+                    [_vm._v("\n                Skip your turn\n            ")]
+                  )
+                : _vm._e()
+            ])
           : _vm._e()
       ]),
       _vm._v(" "),
@@ -59585,7 +59621,7 @@ var render = function() {
             "d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center"
         },
         [
-          _vm.cardsInHand.length === 0 && _vm.selected !== null
+          _vm.game && _vm.cardsInHand.length === 0
             ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
                 _vm._v("You won the game")
               ])
@@ -59596,27 +59632,40 @@ var render = function() {
             : _vm._e(),
           _vm._v(" "),
           _vm._l(_vm.cardsInHand, function(card, index) {
-            return _c("card", {
-              key: card.id,
-              ref: card.id,
-              refInFor: true,
-              staticClass: "my-2",
-              class: { selected: index === _vm.selected },
-              staticStyle: { "margin-left": "-35px", "margin-right": "-35px" },
-              style: {
-                zIndex: index > _vm.selected ? 100 - index : 100 + index
-              },
-              attrs: { card: card },
-              nativeOn: {
-                click: function($event) {
-                  return _vm.select(index)
-                }
-              }
-            })
+            return !_vm.game.finished_at
+              ? _c("card", {
+                  key: card.id,
+                  ref: card.id,
+                  refInFor: true,
+                  staticClass: "my-2",
+                  class: { selected: index === _vm.selected },
+                  staticStyle: {
+                    "margin-left": "-35px",
+                    "margin-right": "-35px"
+                  },
+                  style: {
+                    zIndex: index > _vm.selected ? 100 - index : 100 + index
+                  },
+                  attrs: { card: card },
+                  nativeOn: {
+                    click: function($event) {
+                      return _vm.select(index)
+                    }
+                  }
+                })
+              : _vm._e()
           })
         ],
         2
-      )
+      ),
+      _vm._v(" "),
+      _vm.game && (_vm.cardsInHand.length === 0 || _vm.game.finished_at)
+        ? _c("a", { staticClass: "text-dark", attrs: { href: "/" } }, [
+            _c("h4", { staticClass: "text-uppercase" }, [
+              _vm._v("Return to main screen")
+            ])
+          ])
+        : _vm._e()
     ]
   )
 }
@@ -59787,20 +59836,29 @@ var render = function() {
       ? _c(
           "div",
           { staticClass: "d-flex flex-column" },
-          _vm._l(_vm.cards, function(card, index) {
-            return card.table
-              ? _c("card", {
-                  key: index,
-                  class: {
-                    firstMargin: index < _vm.cards.length - 1,
-                    lastMargin: index === _vm.cards.length - 1
-                  },
-                  style: { zIndex: 100 - index },
-                  attrs: { card: card }
+          [
+            _vm.cardsOnStack.length >= 7
+              ? _c("font-awesome-icon", {
+                  staticClass: "crown",
+                  attrs: { icon: "crown", size: "3x" }
                 })
-              : _vm._e()
-          }),
-          1
+              : _vm._e(),
+            _vm._v(" "),
+            _vm._l(_vm.cards, function(card, index) {
+              return card.table
+                ? _c("card", {
+                    key: index,
+                    class: {
+                      firstMargin: index < _vm.cards.length - 1,
+                      lastMargin: index === _vm.cards.length - 1
+                    },
+                    style: { zIndex: 100 - index },
+                    attrs: { card: card }
+                  })
+                : _vm._e()
+            })
+          ],
+          2
         )
       : _c("div", { staticClass: "lastMargin placeholder" })
   ])
@@ -73241,7 +73299,7 @@ files.keys().map(function (key) {
 
 
 
-_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faCircleNotch"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faTimesCircle"]);
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faCircleNotch"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faTimesCircle"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faCrown"]);
 Vue.component('font-awesome-icon', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_2__["FontAwesomeIcon"]);
 Vue.config.productionTip = false;
 
@@ -74013,11 +74071,15 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     cards: [],
     players: [],
     ownCards: [],
-    turn: null
+    turn: null,
+    canBypassTurn: false
   },
   mutations: {
     setGame: function setGame(state, payload) {
-      state.game = payload.id;
+      state.game = {
+        id: payload.id,
+        finished_at: payload.finished_at
+      };
       state.players = payload.players;
       state.turn = _.find(payload.players, function (o) {
         return o.turn === true;

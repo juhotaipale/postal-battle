@@ -21,6 +21,11 @@ class Player extends Authenticatable
         return ($this->game && $this->game->turn_player_id === $this->id);
     }
 
+    public function getSkipTurnAttribute()
+    {
+        return ($this->game && $this->turn == $this->id && $this->game->previous_player_id === $this->id);
+    }
+
     public function cards(): HasMany
     {
         return $this->hasMany(Card::class);

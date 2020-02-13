@@ -1,6 +1,7 @@
 <template>
     <div>
         <div v-if="cardsOnStack.length > 0" class="d-flex flex-column">
+            <font-awesome-icon v-if="cardsOnStack.length >= 7" icon="crown" size="3x" class="crown"></font-awesome-icon>
             <card v-if="card.table" v-for="(card, index) in cards" :key="index" :class="{firstMargin: index < cards.length - 1, lastMargin: index === cards.length - 1 }"
                   :style="{ zIndex: 100 - index }" :card="card"></card>
         </div>
@@ -31,6 +32,12 @@
     .lastMargin {
         margin-top: -15px !important;
         margin-bottom: -15px !important;
+    }
+
+    .crown {
+        margin-bottom: 80px;
+        margin-left: 32px;
+        color: #f2bf13;
     }
 
     .placeholder {

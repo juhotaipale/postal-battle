@@ -12,11 +12,15 @@ export default new Vuex.Store({
         players: [],
         ownCards: [],
         turn: null,
+        canBypassTurn: false
     },
 
     mutations: {
         setGame(state, payload) {
-            state.game = payload.id;
+            state.game = {
+                id: payload.id,
+                finished_at: payload.finished_at,
+            };
             state.players = payload.players;
             state.turn = _.find(payload.players, function (o) { return o.turn === true; });
             state.cards = _.orderBy(payload.cards, function (o) { return o.data.code; }, ['asc']);
