@@ -59627,7 +59627,7 @@ var render = function() {
               ])
             : _vm.game && _vm.game.finished_at
             ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
-                _vm._v("Game over, " + _vm._s(_vm.turn.name) + " won the game")
+                _vm._v("Game over, you lost the game")
               ])
             : _vm._e(),
           _vm._v(" "),
@@ -74120,7 +74120,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                order = [0, 1, 2, 7, 3, 8, 14, 9, 10, 11, 4, 21, 5, 28, 15, 16, 17, 29, 30, 31, 6, 12, 13, 35, 36, 37, 38, 22, 23, 18, 24, 25, 26, 49, 50, 27, 32, 33, 39, 40, 34, 41, 51, 52, 53, 54, 42, 43, 55, 19, 20, 44, 45, 46, 47, 48];
+                order = [0, 1, 2, 7, 3, 8, 14, 9, 10, 11, 4, 21, 5, 28, 15, 16, 17, 29, 30, 31, 6, 12, 13, 35, 36, 37, 38, 22, 23, 18, 24, 25, 26, 49, 50, 27, 32, 33, 39, 40, 34, 41, 51, 52, 53, 54, 42, 43, 55, 19, 20, 44, 45, 46, 47];
                 i = 0;
 
               case 2:
@@ -74132,7 +74132,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
                 axios.post('/api/game/' + payload + '/place/' + state.cards[order[i]].id);
                 _context.next = 6;
                 return new Promise(function (r) {
-                  return setTimeout(r, 1000);
+                  return setTimeout(r, 2000);
                 });
 
               case 6:

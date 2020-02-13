@@ -2,7 +2,7 @@
 @section('content')
 
     @auth
-        <div class="position-absolute text-right" style="top: 35px; right: 30px;">
+        <div class="position-absolute text-right" style="top: 25px; right: 30px;">
             Player: <b>{{ \Illuminate\Support\Facades\Auth::user()->name }}</b><br />
             <a href="{{ route('logout') }}">End session</a>
         </div>
