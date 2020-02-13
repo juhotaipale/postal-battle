@@ -6,7 +6,7 @@
                     <div class="col-6">
                         <h2>POSTAL BATTLE</h2>
                     </div>
-                    <div ref="turn" class="col-6">
+                    <div v-if="! game.finished_at" ref="turn" class="col-6">
                         <h2 v-if="turn && turn.id == user" class="text-uppercase">It's your turn</h2>
                         <h2 v-else-if="turn">Waiting for {{ turn.name }}'s move...</h2>
                     </div>
@@ -48,7 +48,7 @@
         },
 
         methods: {
-            ...mapActions(['setGame']),
+            ...mapActions(['setGame', 'demo']),
 
             filterByDistributionCentre: function (distributionCentre) {
                 let cards = _.filter(this.cards, function (o) {
@@ -71,6 +71,10 @@
         },
 
         created() {
+            window.DEMO = (game) => {
+                this.demo(game);
+            };
+
             this.fetchGame();
 
             Echo.private('game.' + this.uuid)

@@ -127,15 +127,22 @@ class GameController extends Controller
 
     public function place(Game $game, Card $card)
     {
-        $game->loadMissing('cards', 'players');
-
-        $next = $game->players()->pluck('id')->search($game->turn_player_id) + 1;
-        $next = ($next >= count($game->players) ? 0 : $next);
-        $game->turn_player_id = $game->players[$next]->id;
-        $game->save();
-
         $card->player()->associate(null);
         $card->save();
+
+        $game->loadMissing('cards', 'players');
+
+        foreach ($game->players as $player) {
+            if (count($player->cards) === 0) $game->finished_at = now();
+        }
+
+        if (! $game->finished_at) {
+            $next = $game->players()->pluck('id')->search($game->turn_player_id) + 1;
+            $next = ($next >= count($game->players) ? 0 : $next);
+            $game->turn_player_id = $game->players[$next]->id;
+        }
+
+        $game->save();
 
         broadcast(new GameUpdated($game))->toOthers();
     }

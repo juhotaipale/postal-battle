@@ -34,6 +34,19 @@ export default new Vuex.Store({
             next = (next >= state.players.length ? 0 : next);
             state.turn = state.players[next];
         },
+
+        async demo(state, payload) {
+            let order = [0, 1, 2, 7, 3, 8, 14, 9, 10, 11, 4, 21, 5, 28,
+                15, 16, 17, 29, 30, 31, 6, 12, 13, 35, 36, 37, 38, 22, 23,
+                18, 24, 25, 26, 49, 50, 27, 32, 33, 39, 40, 34, 41, 51,
+                52, 53, 54, 42, 43, 55, 19, 20, 44, 45, 46, 47, 48];
+
+            for (let i = 0; i < order.length; i++) {
+                axios.post('/api/game/' + payload + '/place/' + state.cards[order[i]].id);
+
+                await new Promise(r => setTimeout(r, 2000));
+            }
+        }
     },
 
     actions: {
@@ -47,6 +60,10 @@ export default new Vuex.Store({
 
         rotateTurn(context, payload) {
             context.commit('rotateTurn', payload);
-        }
+        },
+
+        demo(context, payload) {
+            context.commit('demo', payload);
+        },
     }
 });

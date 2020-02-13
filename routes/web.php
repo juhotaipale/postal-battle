@@ -14,3 +14,4 @@
 Route::get('/', 'GameController@index')->name('index');
 Route::get('game/{game}', 'GameController@show')->name('game');
 Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+Route::get('game/{game}/demo', 'GameController@demo')->name('demo');
