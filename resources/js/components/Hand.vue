@@ -20,7 +20,7 @@
             }
         },
         computed: {
-            ...mapState(['cards', 'ownCards']),
+            ...mapState(['cards', 'ownCards', 'turn']),
 
             cardsInHand: function () {
                 return _.filter(this.ownCards, function (o) {
@@ -29,52 +29,61 @@
             }
         },
         methods: {
-            ...mapActions(['placeCard']),
+            ...mapActions(['placeCard', 'rotateTurn']),
 
             select: function (index) {
                 this.selected = index;
             },
 
             place: function (card) {
-                let allowed = false;
+                if (this.turn.id == USER) {
 
-                if (! card.parent_id) {
-                    switch (card.data.code) {
-                        case '00000':
-                            allowed = true;
-                            break;
-                        case '33000':
-                        case '40000':
-                        case '53000':
-                            allowed = _.filter(this.cards, function (o) {
-                                return o.table === true && o.data.code === '00000';
-                            }).length === 1;
-                            break;
-                        default:
-                            allowed = _.filter(this.cards, function (o) {
-                                return o.table === true && _.includes(['33000', '40000', '53000'], o.data.code);
-                            }).length === 3;
-                            break;
+                    let allowed = false;
+
+                    if (!card.parent_id) {
+                        switch (card.data.code) {
+                            case '00000':
+                                allowed = true;
+                                break;
+                            case '33000':
+                            case '40000':
+                            case '53000':
+                                allowed = _.filter(this.cards, function (o) {
+                                    return o.table === true && o.data.code === '00000';
+                                }).length === 1;
+                                break;
+                            default:
+                                allowed = _.filter(this.cards, function (o) {
+                                    return o.table === true && _.includes(['33000', '40000', '53000'], o.data.code);
+                                }).length === 3;
+                                break;
+                        }
+                    } else {
+                        allowed = _.find(this.cards, function (o) {
+                            return o.id === card.parent_id && o.table;
+                        });
+                    }
+
+                    if (allowed) {
+                        this.placeCard(card);
+                        this.rotateTurn();
+
+                        axios.post('/api/game/' + this.$parent.uuid + '/place/' + card.id)
+                            .catch(error => {
+                                alert(error.message);
+                            });
+                    } else {
+                        this.$refs[card.id][0].$el.classList.add('blinker');
+
+                        setTimeout(() => {
+                            this.$refs[card.id][0].$el.classList.remove('blinker');
+                        }, 500);
                     }
                 } else {
-                    allowed = _.find(this.cards, function (o) {
-                        return o.id === card.parent_id && o.table;
-                    });
-                }
-
-                if (allowed) {
-                    this.placeCard(card);
-
-                    axios.post('/api/game/' + this.$parent.uuid + '/place/' + card.id)
-                        .catch(error => {
-                            alert(error.message);
-                        });
-
-                } else {
-                    this.$refs[card.id][0].$el.classList.add('blinker');
+                    this.$parent.$refs['turn'].classList.add('blinker');
 
                     setTimeout(() => {
-                        this.$refs[card.id][0].$el.classList.remove('blinker');
+                        this.$parent.$refs['turn'].classList.remove('blinker');
                     }, 500);
                 }
             },

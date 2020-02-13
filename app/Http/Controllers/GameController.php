@@ -27,10 +27,14 @@ class GameController extends Controller
      */
     public function index(Request $request)
     {
+        if (!$request->is('api/*') && optional(Auth::user())->game) {
+            return redirect()->route('game', Auth::user()->game);
+        }
+
         $games = Game::query()
             ->with('players')
             ->without('cards')
-            ->where('finished_at', null)
+            ->where('started_at', null)
             ->orderBy('created_at')
             ->get();
 
@@ -114,6 +118,7 @@ class GameController extends Controller
             $i = ($i + 1 >= count($players) ? 0 : $i + 1);
         }
 
+        $game->turn_player_id = $players[0]->id;
         $game->started_at = now();
         $game->save();
 
@@ -122,7 +127,12 @@ class GameController extends Controller
 
     public function place(Game $game, Card $card)
     {
-        $game->loadMissing('cards');
+        $game->loadMissing('cards', 'players');
+
+        $next = $game->players()->pluck('id')->search($game->turn_player_id) + 1;
+        $next = ($next >= count($game->players) ? 0 : $next);
+        $game->turn_player_id = $game->players[$next]->id;
+        $game->save();
 
         $card->player()->associate(null);
         $card->save();

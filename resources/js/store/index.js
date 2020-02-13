@@ -11,12 +11,14 @@ export default new Vuex.Store({
         cards: [],
         players: [],
         ownCards: [],
+        turn: null,
     },
 
     mutations: {
         setGame(state, payload) {
             state.game = payload.id;
             state.players = payload.players;
+            state.turn = _.find(payload.players, function (o) { return o.turn === true; });
             state.cards = _.orderBy(payload.cards, function (o) { return o.data.code; }, ['asc']);
             state.ownCards = _.orderBy(_.filter(payload.cards, function (o) { return o.player_id == USER }), function (o) {
                 return o.data.code;
@@ -25,6 +27,12 @@ export default new Vuex.Store({
 
         placeCard(state, payload) {
             state.cards[_.indexOf(state.cards, payload)].table = true;
+        },
+
+        rotateTurn(state) {
+            let next = _.indexOf(state.players, state.turn) + 1;
+            next = (next >= state.players.length ? 0 : next);
+            state.turn = state.players[next];
         },
     },
 
@@ -35,6 +43,10 @@ export default new Vuex.Store({
 
         placeCard(context, payload) {
             context.commit('placeCard', payload);
+        },
+
+        rotateTurn(context, payload) {
+            context.commit('rotateTurn', payload);
         }
     }
 });

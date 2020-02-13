@@ -11,7 +11,7 @@ class IndexController extends Controller
 {
     public function index()
     {
-        // $game = optional(Auth::user())->game ? new GameResource(Auth::user()->game) : null;
+
 
         return view('index');
     }

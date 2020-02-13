@@ -6,8 +6,9 @@
                     <div class="col-6">
                         <h2>POSTAL BATTLE</h2>
                     </div>
-                    <div class="col-6">
-                        <h2>IT'S YOUR TURN</h2>
+                    <div ref="turn" class="col-6">
+                        <h2 v-if="turn && turn.id == user" class="text-uppercase">It's your turn</h2>
+                        <h2 v-else-if="turn">Waiting for {{ turn.name }}'s move...</h2>
                     </div>
                 </div>
             </div>
@@ -33,13 +34,17 @@
             }
         },
         computed: {
-            ...mapState(['game', 'cards', 'players']),
+            ...mapState(['game', 'cards', 'players', 'turn']),
+
+            user: function () {
+                return USER;
+            },
 
             distributionCentres: function () {
                 return _.filter(this.cards, function (o) {
                     return o.type === 'distributionCentre';
                 });
-            }
+            },
         },
 
         methods: {
@@ -51,29 +56,26 @@
                 });
 
                 return _.orderBy(cards, ['data.code'], ['desc']);
+            },
+
+            fetchGame: function () {
+                axios.get('/api/game/' + this.uuid)
+                    .then(response => {
+                        this.setGame(response.data);
+                        this.loading = false;
+                    })
+                    .catch(error => {
+                        alert(error.message);
+                    });
             }
         },
 
         created() {
-            axios.get('/api/game/' + this.uuid)
-                .then(response => {
-                    this.setGame(response.data);
-                    this.loading = false;
-                })
-                .catch(error => {
-                    alert(error.message);
-                });
+            this.fetchGame();
 
             Echo.private('game.' + this.uuid)
                 .listen('.updated', (e) => {
-                    axios.get('/api/game/' + this.uuid)
-                        .then(response => {
-                            this.setGame(response.data);
-                            this.loading = false;
-                        })
-                        .catch(error => {
-                            alert(error.message);
-                        });
+                    this.fetchGame();
                 });
         }
     }
@@ -82,5 +84,15 @@
 <style scoped>
     .game-container {
         height: 100%;
+    }
+
+    .blinker {
+        animation: blink .1s step-end 5 alternate;
+    }
+
+    @keyframes blink {
+        50% {
+            color: red;
+        }
     }
 </style>

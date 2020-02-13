@@ -48,7 +48,7 @@
             login() {
                 this.loading = true;
 
-                axios.post('api/auth', {
+                axios.post('/api/auth', {
                     name: this.name,
                 }).then(response => {
                     location.reload();

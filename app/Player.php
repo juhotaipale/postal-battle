@@ -16,6 +16,11 @@ class Player extends Authenticatable
         'remember_token',
     ];
 
+    public function getTurnAttribute()
+    {
+        return ($this->game && $this->game->turn_player_id === $this->id);
+    }
+
     public function cards(): HasMany
     {
         return $this->hasMany(Card::class);

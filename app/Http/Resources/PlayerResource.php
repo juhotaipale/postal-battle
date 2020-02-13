@@ -17,6 +17,7 @@ class PlayerResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'turn' => $this->turn,
         ];
     }
 }

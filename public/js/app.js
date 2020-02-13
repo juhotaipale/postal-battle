@@ -11765,6 +11765,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Game",
@@ -11774,7 +11775,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       loading: true
     };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['game', 'cards', 'players']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['game', 'cards', 'players', 'turn']), {
+    user: function user() {
+      return USER;
+    },
     distributionCentres: function distributionCentres() {
       return _.filter(this.cards, function (o) {
         return o.type === 'distributionCentre';
@@ -11788,26 +11792,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
 
       return _.orderBy(cards, ['data.code'], ['desc']);
-    }
-  }),
-  created: function created() {
-    var _this = this;
+    },
+    fetchGame: function fetchGame() {
+      var _this = this;
 
-    axios.get('/api/game/' + this.uuid).then(function (response) {
-      _this.setGame(response.data);
-
-      _this.loading = false;
-    })["catch"](function (error) {
-      alert(error.message);
-    });
-    Echo["private"]('game.' + this.uuid).listen('.updated', function (e) {
-      axios.get('/api/game/' + _this.uuid).then(function (response) {
+      axios.get('/api/game/' + this.uuid).then(function (response) {
         _this.setGame(response.data);
 
         _this.loading = false;
       })["catch"](function (error) {
         alert(error.message);
       });
+    }
+  }),
+  created: function created() {
+    var _this2 = this;
+
+    this.fetchGame();
+    Echo["private"]('game.' + this.uuid).listen('.updated', function (e) {
+      _this2.fetchGame();
     });
   }
 });
@@ -11970,57 +11973,65 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       selected: null
     };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['cards', 'ownCards']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['cards', 'ownCards', 'turn']), {
     cardsInHand: function cardsInHand() {
       return _.filter(this.ownCards, function (o) {
         return !o.table;
       });
     }
   }),
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['placeCard']), {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['placeCard', 'rotateTurn']), {
     select: function select(index) {
       this.selected = index;
     },
     place: function place(card) {
       var _this = this;
 
-      var allowed = false;
+      if (this.turn.id == USER) {
+        var allowed = false;
 
-      if (!card.parent_id) {
-        switch (card.data.code) {
-          case '00000':
-            allowed = true;
-            break;
+        if (!card.parent_id) {
+          switch (card.data.code) {
+            case '00000':
+              allowed = true;
+              break;
 
-          case '33000':
-          case '40000':
-          case '53000':
-            allowed = _.filter(this.cards, function (o) {
-              return o.table === true && o.data.code === '00000';
-            }).length === 1;
-            break;
+            case '33000':
+            case '40000':
+            case '53000':
+              allowed = _.filter(this.cards, function (o) {
+                return o.table === true && o.data.code === '00000';
+              }).length === 1;
+              break;
 
-          default:
-            allowed = _.filter(this.cards, function (o) {
-              return o.table === true && _.includes(['33000', '40000', '53000'], o.data.code);
-            }).length === 3;
-            break;
+            default:
+              allowed = _.filter(this.cards, function (o) {
+                return o.table === true && _.includes(['33000', '40000', '53000'], o.data.code);
+              }).length === 3;
+              break;
+          }
+        } else {
+          allowed = _.find(this.cards, function (o) {
+            return o.id === card.parent_id && o.table;
+          });
+        }
+
+        if (allowed) {
+          this.placeCard(card);
+          this.rotateTurn();
+          axios.post('/api/game/' + this.$parent.uuid + '/place/' + card.id)["catch"](function (error) {
+            alert(error.message);
+          });
+        } else {
+          this.$refs[card.id][0].$el.classList.add('blinker');
+          setTimeout(function () {
+            _this.$refs[card.id][0].$el.classList.remove('blinker');
+          }, 500);
         }
       } else {
-        allowed = _.find(this.cards, function (o) {
-          return o.id === card.parent_id && o.table;
-        });
-      }
-
-      if (allowed) {
-        this.placeCard(card);
-        axios.post('/api/game/' + this.$parent.uuid + '/place/' + card.id)["catch"](function (error) {
-          alert(error.message);
-        });
-      } else {
-        this.$refs[card.id][0].$el.classList.add('blinker');
+        this.$parent.$refs['turn'].classList.add('blinker');
         setTimeout(function () {
-          _this.$refs[card.id][0].$el.classList.remove('blinker');
+          _this.$parent.$refs['turn'].classList.remove('blinker');
         }, 500);
       }
     }
@@ -12095,7 +12106,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.loading = true;
-      axios.post('api/auth', {
+      axios.post('/api/auth', {
         name: this.name
       }).then(function (response) {
         location.reload();
@@ -18763,7 +18774,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.game-container[data-v-3a2c79dd] {\n    height: 100%;\n}\n", ""]);
+exports.push([module.i, "\n.game-container[data-v-3a2c79dd] {\n    height: 100%;\n}\n.blinker[data-v-3a2c79dd] {\n    -webkit-animation: blink-data-v-3a2c79dd .1s step-end 5 alternate;\n            animation: blink-data-v-3a2c79dd .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-3a2c79dd {\n50% {\n        color: red;\n}\n}\n@keyframes blink-data-v-3a2c79dd {\n50% {\n        color: red;\n}\n}\n", ""]);
 
 // exports
 
@@ -58492,7 +58503,27 @@ var render = function() {
     "div",
     { staticClass: "game-container d-flex flex-column align-items-center" },
     [
-      _vm._m(0),
+      _c("div", { staticClass: "status w-100 pt-4 align-self-baseline" }, [
+        _c("div", { staticClass: "container" }, [
+          _c("div", { staticClass: "row" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { ref: "turn", staticClass: "col-6" }, [
+              _vm.turn && _vm.turn.id == _vm.user
+                ? _c("h2", { staticClass: "text-uppercase" }, [
+                    _vm._v("It's your turn")
+                  ])
+                : _vm.turn
+                ? _c("h2", [
+                    _vm._v(
+                      "Waiting for " + _vm._s(_vm.turn.name) + "'s move..."
+                    )
+                  ])
+                : _vm._e()
+            ])
+          ])
+        ])
+      ]),
       _vm._v(" "),
       _c(
         "div",
@@ -58525,18 +58556,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "status w-100 pt-4 align-self-baseline" }, [
-      _c("div", { staticClass: "container" }, [
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-6" }, [
-            _c("h2", [_vm._v("POSTAL BATTLE")])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-6" }, [
-            _c("h2", [_vm._v("IT'S YOUR TURN")])
-          ])
-        ])
-      ])
+    return _c("div", { staticClass: "col-6" }, [
+      _c("h2", [_vm._v("POSTAL BATTLE")])
     ])
   }
 ]
@@ -73066,12 +73087,16 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     game: null,
     cards: [],
     players: [],
-    ownCards: []
+    ownCards: [],
+    turn: null
   },
   mutations: {
     setGame: function setGame(state, payload) {
       state.game = payload.id;
       state.players = payload.players;
+      state.turn = _.find(payload.players, function (o) {
+        return o.turn === true;
+      });
       state.cards = _.orderBy(payload.cards, function (o) {
         return o.data.code;
       }, ['asc']);
@@ -73083,6 +73108,11 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     },
     placeCard: function placeCard(state, payload) {
       state.cards[_.indexOf(state.cards, payload)].table = true;
+    },
+    rotateTurn: function rotateTurn(state) {
+      var next = _.indexOf(state.players, state.turn) + 1;
+      next = next >= state.players.length ? 0 : next;
+      state.turn = state.players[next];
     }
   },
   actions: {
@@ -73091,6 +73121,9 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     },
     placeCard: function placeCard(context, payload) {
       context.commit('placeCard', payload);
+    },
+    rotateTurn: function rotateTurn(context, payload) {
+      context.commit('rotateTurn', payload);
     }
   }
 }));
