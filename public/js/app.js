@@ -12026,12 +12026,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Hand",
   data: function data() {
     return {
-      selected: null
+      selected: null,
+      getCardLoading: false
     };
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['game', 'cards', 'ownCards', 'turn']), {
@@ -12039,15 +12049,67 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return _.filter(this.ownCards, function (o) {
         return !o.table;
       });
+    },
+    myTurn: function myTurn() {
+      return this.turn.id == USER;
+    },
+    canPlaceAnything: function canPlaceAnything() {
+      var _this = this;
+
+      var can = false;
+
+      _.each(this.cardsInHand, function (card) {
+        if (!card.parent_id) {
+          switch (card.data.code) {
+            case '00000':
+              can = true;
+              break;
+
+            case '33000':
+            case '40000':
+            case '53000':
+              can = _.filter(_this.cards, function (o) {
+                return o.table === true && o.data.code === '00000';
+              }).length === 1;
+              break;
+
+            default:
+              can = _.filter(_this.cards, function (o) {
+                return o.table === true && _.includes(['33000', '40000', '53000'], o.data.code);
+              }).length === 3;
+              break;
+          }
+        } else {
+          can = _.find(_this.cards, function (o) {
+            return o.id === card.parent_id && o.table;
+          });
+        }
+
+        if (can) return false;
+      });
+
+      return can;
     }
   }),
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['placeCard', 'rotateTurn']), {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['placeCard', 'rotateTurn', 'appendCard']), {
     select: function select(index) {
       this.selected = index;
     },
-    place: function place(card) {
-      var _this = this;
+    getCard: function getCard() {
+      var _this2 = this;
 
+      this.getCardLoading = true;
+      axios.post('/api/game/' + this.$parent.uuid + '/getCard').then(function (response) {
+        _this2.appendCard(response.data);
+
+        _this2.rotateTurn();
+      })["catch"](function (error) {
+        alert(error.message);
+      })["finally"](function () {
+        _this2.getCardLoading = false;
+      });
+    },
+    place: function place(card) {
       if (this.turn.id == USER) {
         var allowed = false;
 
@@ -12084,24 +12146,35 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             alert(error.message);
           });
         } else {
-          this.$refs[card.id][0].$el.classList.add('blinker');
-          setTimeout(function () {
-            _this.$refs[card.id][0].$el.classList.remove('blinker');
-          }, 500);
+          this.blinkCard(card);
         }
       } else {
-        this.$parent.$refs['turn'].classList.add('blinker');
-        setTimeout(function () {
-          _this.$parent.$refs['turn'].classList.remove('blinker');
-        }, 500);
+        this.blinkCard(card);
+        this.blinkTurn();
       }
+    },
+    blinkCard: function blinkCard(card) {
+      var _this3 = this;
+
+      this.$refs[card.id][0].$el.classList.add('blinker');
+      setTimeout(function () {
+        _this3.$refs[card.id][0].$el.classList.remove('blinker');
+      }, 500);
+    },
+    blinkTurn: function blinkTurn() {
+      var _this4 = this;
+
+      this.$parent.$refs['turn'].classList.add('blinker');
+      setTimeout(function () {
+        _this4.$parent.$refs['turn'].classList.remove('blinker');
+      }, 500);
     }
   }),
   mounted: function mounted() {
-    var _this2 = this;
+    var _this5 = this;
 
     document.addEventListener('keyup', function (e) {
-      if (e.code === "ArrowLeft") _this2.select(Math.max(0, _this2.selected - 1));else if (e.code === "ArrowRight") _this2.select(Math.min(_this2.cardsInHand.length - 1, _this2.selected + 1));else if (e.code === "Enter") _this2.place(_this2.cardsInHand[_this2.selected]);
+      if (e.code === "ArrowLeft") _this5.select(Math.max(0, _this5.selected - 1));else if (e.code === "ArrowRight") _this5.select(Math.min(_this5.cardsInHand.length - 1, _this5.selected + 1));else if (e.code === "Enter") _this5.place(_this5.cardsInHand[_this5.selected]);
     });
   }
 });
@@ -18873,7 +18946,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.selected[data-v-b897304c] {\n    z-index: 1000 !important;\n    margin-top: -10px !important;\n}\n.blinker[data-v-b897304c] {\n    -webkit-animation: blink-data-v-b897304c .1s step-end 5 alternate;\n            animation: blink-data-v-b897304c .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n@keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n", ""]);
+exports.push([module.i, "\n.selected[data-v-b897304c] {\n    z-index: 1000 !important;\n    margin-top: -10px !important;\n}\n.getCard[data-v-b897304c]:hover {\n    text-decoration: underline;\n    cursor: pointer;\n}\n.blinker[data-v-b897304c] {\n    -webkit-animation: blink-data-v-b897304c .1s step-end 5 alternate;\n            animation: blink-data-v-b897304c .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n@keyframes blink-data-v-b897304c {\n50% {\n        background-color: #feb4b4;\n}\n}\n", ""]);
 
 // exports
 
@@ -59473,46 +59546,79 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "div",
-      {
-        staticClass:
-          "d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center",
-        staticStyle: { width: "90vw", height: "100%" }
-      },
-      [
-        _vm.cardsInHand.length === 0 && _vm.selected !== null
-          ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
-              _vm._v("You won the game")
-            ])
-          : _vm.game && _vm.game.finished_at
-          ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
-              _vm._v("Game over, " + _vm._s(_vm.turn.name) + " won the game")
-            ])
-          : _vm._e(),
-        _vm._v(" "),
-        _vm._l(_vm.cardsInHand, function(card, index) {
-          return _c("card", {
-            key: card.id,
-            ref: card.id,
-            refInFor: true,
-            staticClass: "my-2",
-            class: { selected: index === _vm.selected },
-            staticStyle: { "margin-left": "-35px", "margin-right": "-35px" },
-            style: { zIndex: index > _vm.selected ? 100 - index : 100 + index },
-            attrs: { card: card },
-            nativeOn: {
-              click: function($event) {
-                return _vm.select(index)
+  return _c(
+    "div",
+    {
+      staticClass: "d-flex flex-column align-items-center",
+      staticStyle: { width: "90vw", height: "100%" }
+    },
+    [
+      _c("div", { staticStyle: { height: "40px" } }, [
+        _vm.game && _vm.myTurn && !_vm.canPlaceAnything
+          ? _c(
+              "h4",
+              {
+                staticClass: "text-uppercase getCard",
+                on: { click: _vm.getCard }
+              },
+              [
+                _vm.getCardLoading
+                  ? _c(
+                      "span",
+                      [
+                        _c("font-awesome-icon", {
+                          attrs: { icon: "circle-notch", spin: "" }
+                        })
+                      ],
+                      1
+                    )
+                  : _c("span", [_vm._v("Get a card from previous player")])
+              ]
+            )
+          : _vm._e()
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass:
+            "d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center"
+        },
+        [
+          _vm.cardsInHand.length === 0 && _vm.selected !== null
+            ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
+                _vm._v("You won the game")
+              ])
+            : _vm.game && _vm.game.finished_at
+            ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
+                _vm._v("Game over, " + _vm._s(_vm.turn.name) + " won the game")
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm._l(_vm.cardsInHand, function(card, index) {
+            return _c("card", {
+              key: card.id,
+              ref: card.id,
+              refInFor: true,
+              staticClass: "my-2",
+              class: { selected: index === _vm.selected },
+              staticStyle: { "margin-left": "-35px", "margin-right": "-35px" },
+              style: {
+                zIndex: index > _vm.selected ? 100 - index : 100 + index
+              },
+              attrs: { card: card },
+              nativeOn: {
+                click: function($event) {
+                  return _vm.select(index)
+                }
               }
-            }
+            })
           })
-        })
-      ],
-      2
-    )
-  ])
+        ],
+        2
+      )
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -73933,6 +74039,16 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       next = next >= state.players.length ? 0 : next;
       state.turn = state.players[next];
     },
+    appendCard: function appendCard(state, payload) {
+      var index = _.findIndex(state.cards, ['id', payload.id]);
+
+      state.cards[index] = payload;
+      state.ownCards = _.orderBy(_.filter(state.cards, function (o) {
+        return o.player_id == USER;
+      }), function (o) {
+        return o.data.code;
+      }, ['asc']);
+    },
     demo: function demo(state, payload) {
       return _asyncToGenerator(
       /*#__PURE__*/
@@ -73980,6 +74096,9 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     },
     rotateTurn: function rotateTurn(context, payload) {
       context.commit('rotateTurn', payload);
+    },
+    appendCard: function appendCard(context, payload) {
+      context.commit('appendCard', payload);
     },
     demo: function demo(context, payload) {
       context.commit('demo', payload);

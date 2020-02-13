@@ -35,6 +35,14 @@ export default new Vuex.Store({
             state.turn = state.players[next];
         },
 
+        appendCard(state, payload) {
+            let index = _.findIndex(state.cards, ['id', payload.id]);
+            state.cards[index] = payload;
+            state.ownCards = _.orderBy(_.filter(state.cards, function (o) { return o.player_id == USER }), function (o) {
+                return o.data.code;
+            }, ['asc']);
+        },
+
         async demo(state, payload) {
             let order = [0, 1, 2, 7, 3, 8, 14, 9, 10, 11, 4, 21, 5, 28,
                 15, 16, 17, 29, 30, 31, 6, 12, 13, 35, 36, 37, 38, 22, 23,
@@ -60,6 +68,10 @@ export default new Vuex.Store({
 
         rotateTurn(context, payload) {
             context.commit('rotateTurn', payload);
+        },
+
+        appendCard(context, payload) {
+            context.commit('appendCard', payload);
         },
 
         demo(context, payload) {

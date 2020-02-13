@@ -9,8 +9,10 @@ use App\Events\GameListUpdated;
 use App\Events\GameUpdated;
 use App\Game;
 use App\Helpers\Address;
+use App\Http\Resources\CardResource;
 use App\Http\Resources\GameResource;
 use App\Package;
+use App\Player;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -148,6 +150,31 @@ class GameController extends Controller
     }
 
     /**
+     * Get a card from previous player.
+     *
+     * @param Game $game
+     * @return CardResource
+     */
+    public function getCard(Game $game)
+    {
+        $previous = $game->players()->pluck('id')->search($game->turn_player_id) - 1;
+        $previous = ($previous < 0 ? count($game->players) - 1 : $previous);
+
+        $cards = $game->players[$previous]->cards;
+        $card = $cards[rand(0, count($cards) - 1)];
+        $card->player_id = $game->turn_player_id;
+        $card->save();
+
+        $next = $game->players()->pluck('id')->search($game->turn_player_id) + 1;
+        $next = ($next >= count($game->players) ? 0 : $next);
+        $game->turn_player_id = $game->players[$next]->id;
+        $game->save();
+
+        broadcast(new GameUpdated($game))->toOthers();
+        return new CardResource($card);
+    }
+
+    /**
      * Create a card.
      *
      * @param $cardable
@@ -169,8 +196,6 @@ class GameController extends Controller
 
     /**
      * Generate cards.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     protected function generateCards()
     {
@@ -197,8 +222,6 @@ class GameController extends Controller
 
             $previous = null;
         }
-
-        return response()->json([]);
     }
 
     /**
