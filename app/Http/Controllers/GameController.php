@@ -110,6 +110,7 @@ class GameController extends Controller
     {
         $cards = $game->cards->shuffle();
         $players = $game->players;
+        $firstPlayer = 0;
         $i = 0;
 
         foreach ($cards as $card)
@@ -117,10 +118,15 @@ class GameController extends Controller
             $card->player()->associate($players[$i]);
             $card->save();
 
+            // First turn to the player who has the first card
+            if ($card->cardable->code === '00000') {
+                $firstPlayer = $i;
+            }
+
             $i = ($i + 1 >= count($players) ? 0 : $i + 1);
         }
 
-        $game->turn_player_id = $players[0]->id;
+        $game->turn_player_id = $players[$firstPlayer]->id;
         $game->started_at = now();
         $game->save();
 
