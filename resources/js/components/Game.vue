@@ -3,12 +3,12 @@
         <div class="status w-100 pt-4 align-self-baseline">
             <div class="container">
                 <div class="row">
-                    <div class="col-6">
-                        <h2>POSTAL BATTLE</h2>
+                    <div class="col-2">
+                        <img src="/img/postal_battle.svg" height="40px" />
                     </div>
-                    <div v-if="! game.finished_at" ref="turn" class="col-6">
-                        <h2 v-if="turn && turn.id == user" class="text-uppercase">It's your turn</h2>
-                        <h2 v-else-if="turn">Waiting for {{ turn.name }}'s move...</h2>
+                    <div v-if="game && !game.finished_at" ref="turn" class="col-6">
+                        <h2 v-if="turn.id == user" class="text-uppercase mb-0 mt-1">It's your turn</h2>
+                        <h2 v-else-if="turn" class="mb-0 mt-1">Waiting for {{ turn.name }}'s move...</h2>
                     </div>
                 </div>
             </div>

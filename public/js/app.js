@@ -11677,6 +11677,13 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -11706,6 +11713,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Card",
   props: ['card'],
@@ -11718,6 +11726,41 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['cards']), {
+    canBePlaced: function canBePlaced() {
+      var _this = this;
+
+      var allowed = false;
+
+      if (!this.card.parent_id) {
+        switch (this.card.data.code) {
+          case '00000':
+            allowed = true;
+            break;
+
+          case '33000':
+          case '40000':
+          case '53000':
+            allowed = _.filter(this.cards, function (o) {
+              return o.table === true && o.data.code === '00000';
+            }).length === 1;
+            break;
+
+          default:
+            allowed = _.filter(this.cards, function (o) {
+              return o.table === true && _.includes(['33000', '40000', '53000'], o.data.code);
+            }).length === 3;
+            break;
+        }
+      } else {
+        allowed = _.find(this.cards, function (o) {
+          return o.id === _this.card.parent_id && o.table;
+        });
+      }
+
+      return this.card.table === false && allowed;
+    }
+  }),
   methods: {
     getColor: function getColor(postalCode) {
       switch (postalCode) {
@@ -11981,6 +12024,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Hand",
@@ -11989,7 +12034,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       selected: null
     };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['cards', 'ownCards', 'turn']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['game', 'cards', 'ownCards', 'turn']), {
     cardsInHand: function cardsInHand() {
       return _.filter(this.ownCards, function (o) {
         return !o.table;
@@ -18771,7 +18816,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.card[data-v-b9bc2c0a] {\n    width: 120px;\n    height: 170px;\n    border: 1px solid gray;\n    border-radius: 0.5em;\n    box-shadow: 0px 5px 5px -2px rgba(50, 50, 50, 0.2);\n}\n.address[data-v-b9bc2c0a] {\n    font-size: 70%;\n    border-top: 1px dotted gray;\n    border-bottom: 1px dotted gray;\n}\n.type[data-v-b9bc2c0a] {\n    font-weight: bold;\n}\n.jjfi[data-v-b9bc2c0a] {\n    font-size: 60%;\n}\n.distributionCentre[data-v-b9bc2c0a] {\n    font-size: 90%;\n}\n.postcode[data-v-b9bc2c0a] {\n    font-size: 100%;\n}\n.postcode > h2[data-v-b9bc2c0a] {\n    font-size: 120%;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-b9bc2c0a] {\n    width: 120px;\n    height: 170px;\n    border: 1px solid gray;\n    border-radius: 0.5em;\n    box-shadow: 0px 5px 5px -2px rgba(50, 50, 50, 0.2);\n}\n.allowed[data-v-b9bc2c0a] {\n    border-color: blue;\n    border-width: 2px;\n}\n.address[data-v-b9bc2c0a] {\n    font-size: 70%;\n    border-top: 1px dotted gray;\n    border-bottom: 1px dotted gray;\n}\n.type[data-v-b9bc2c0a] {\n    font-weight: bold;\n}\n.jjfi[data-v-b9bc2c0a] {\n    font-size: 60%;\n}\n.distributionCentre[data-v-b9bc2c0a] {\n    font-size: 90%;\n}\n.postcode[data-v-b9bc2c0a] {\n    font-size: 100%;\n}\n.postcode > h2[data-v-b9bc2c0a] {\n    font-size: 120%;\n}\n", ""]);
 
 // exports
 
@@ -59171,47 +59216,52 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _vm.card.type === "package"
-    ? _c("div", { staticClass: "card d-flex" }, [
-        _c("div", { staticClass: "deco pt-2 px-2" }, [
+    ? _c(
+        "div",
+        { staticClass: "card d-flex", class: { allowed: _vm.canBePlaced } },
+        [
+          _c("div", { staticClass: "deco pt-2 px-2" }, [
+            _c(
+              "div",
+              {
+                staticClass: "type text-uppercase",
+                class: { "text-danger": _vm.card.data.type === "priority" }
+              },
+              [
+                _vm._v(
+                  "\n            " + _vm._s(_vm.card.data.type) + "\n        "
+                )
+              ]
+            ),
+            _vm._v(" "),
+            _c("div", { staticClass: "jjfi" }, [
+              _vm._v(_vm._s(_vm.card.data.jjfi))
+            ])
+          ]),
+          _vm._v(" "),
           _c(
             "div",
             {
-              staticClass: "type text-uppercase",
-              class: { "text-danger": _vm.card.data.type === "priority" }
+              staticClass:
+                "address p-2 my-2 flex-grow-1 d-flex align-items-center"
             },
             [
-              _vm._v(
-                "\n            " + _vm._s(_vm.card.data.type) + "\n        "
-              )
+              _c("span", {
+                domProps: { innerHTML: _vm._s(_vm.card.data.address) }
+              })
             ]
           ),
           _vm._v(" "),
-          _c("div", { staticClass: "jjfi" }, [
-            _vm._v(_vm._s(_vm.card.data.jjfi))
+          _c("div", { staticClass: "postcode pb-2 align-self-center" }, [
+            _vm._v("\n        " + _vm._s(_vm.card.data.code) + "\n    ")
           ])
-        ]),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass:
-              "address p-2 my-2 flex-grow-1 d-flex align-items-center"
-          },
-          [
-            _c("span", {
-              domProps: { innerHTML: _vm._s(_vm.card.data.address) }
-            })
-          ]
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "postcode pb-2 align-self-center" }, [
-          _vm._v("\n        " + _vm._s(_vm.card.data.code) + "\n    ")
-        ])
-      ])
+        ]
+      )
     : _c(
         "div",
         {
           staticClass: "card d-flex",
+          class: { allowed: _vm.canBePlaced },
           style: { backgroundColor: _vm.getColor(_vm.card.data.code) }
         },
         [
@@ -59261,14 +59311,14 @@ var render = function() {
           _c("div", { staticClass: "row" }, [
             _vm._m(0),
             _vm._v(" "),
-            !_vm.game.finished_at
+            _vm.game && !_vm.game.finished_at
               ? _c("div", { ref: "turn", staticClass: "col-6" }, [
-                  _vm.turn && _vm.turn.id == _vm.user
-                    ? _c("h2", { staticClass: "text-uppercase" }, [
+                  _vm.turn.id == _vm.user
+                    ? _c("h2", { staticClass: "text-uppercase mb-0 mt-1" }, [
                         _vm._v("It's your turn")
                       ])
                     : _vm.turn
-                    ? _c("h2", [
+                    ? _c("h2", { staticClass: "mb-0 mt-1" }, [
                         _vm._v(
                           "Waiting for " + _vm._s(_vm.turn.name) + "'s move..."
                         )
@@ -59311,8 +59361,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-6" }, [
-      _c("h2", [_vm._v("POSTAL BATTLE")])
+    return _c("div", { staticClass: "col-2" }, [
+      _c("img", { attrs: { src: "/img/postal_battle.svg", height: "40px" } })
     ])
   }
 ]
@@ -59423,40 +59473,46 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    {
-      staticClass:
-        "d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center",
-      staticStyle: { width: "90vw", height: "100%" }
-    },
-    [
-      _vm.cardsInHand.length === 0 && _vm.selected !== null
-        ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
-            _vm._v("\n        You are the winner\n    ")
-          ])
-        : _vm._e(),
-      _vm._v(" "),
-      _vm._l(_vm.cardsInHand, function(card, index) {
-        return _c("card", {
-          key: card.id,
-          ref: card.id,
-          refInFor: true,
-          staticClass: "my-2",
-          class: { selected: index === _vm.selected },
-          staticStyle: { "margin-left": "-35px", "margin-right": "-35px" },
-          style: { zIndex: index > _vm.selected ? 100 - index : 100 + index },
-          attrs: { card: card },
-          nativeOn: {
-            click: function($event) {
-              return _vm.select(index)
+  return _c("div", [
+    _c(
+      "div",
+      {
+        staticClass:
+          "d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center",
+        staticStyle: { width: "90vw", height: "100%" }
+      },
+      [
+        _vm.cardsInHand.length === 0 && _vm.selected !== null
+          ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
+              _vm._v("You won the game")
+            ])
+          : _vm.game && _vm.game.finished_at
+          ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
+              _vm._v("Game over, " + _vm._s(_vm.turn.name) + " won the game")
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm._l(_vm.cardsInHand, function(card, index) {
+          return _c("card", {
+            key: card.id,
+            ref: card.id,
+            refInFor: true,
+            staticClass: "my-2",
+            class: { selected: index === _vm.selected },
+            staticStyle: { "margin-left": "-35px", "margin-right": "-35px" },
+            style: { zIndex: index > _vm.selected ? 100 - index : 100 + index },
+            attrs: { card: card },
+            nativeOn: {
+              click: function($event) {
+                return _vm.select(index)
+              }
             }
-          }
+          })
         })
-      })
-    ],
-    2
-  )
+      ],
+      2
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -59758,7 +59814,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "status py-4" }, [
-      _c("h2", [_vm._v("POSTAL BATTLE")])
+      _c("img", { attrs: { src: "/img/postal_battle.svg", height: "70px" } })
     ])
   }
 ]
@@ -73898,7 +73954,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
                 axios.post('/api/game/' + payload + '/place/' + state.cards[order[i]].id);
                 _context.next = 6;
                 return new Promise(function (r) {
-                  return setTimeout(r, 2000);
+                  return setTimeout(r, 1000);
                 });
 
               case 6:

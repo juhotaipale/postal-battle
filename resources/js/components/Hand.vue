@@ -1,11 +1,13 @@
 <template>
-    <div class="d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center" style="width: 90vw; height: 100%;">
-        <h1 v-if="cardsInHand.length === 0 && selected !== null" class="align-self-center text-uppercase">
-            You are the winner
-        </h1>
-        <card :ref="card.id" style="margin-left: -35px; margin-right: -35px;" v-for="(card, index) in cardsInHand" :key="card.id"
-              :style="{ zIndex: (index > selected ? 100 - index : 100 + index) }" class="my-2" :class="{ selected: (index === selected) }"
-              :card="card" @click.native="select(index)"></card>
+    <div>
+        <div class="d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center" style="width: 90vw; height: 100%;">
+            <h1 v-if="cardsInHand.length === 0 && selected !== null" class="align-self-center text-uppercase">You won the game</h1>
+            <h1 v-else-if="game && game.finished_at" class="align-self-center text-uppercase">Game over, {{ turn.name }} won the game</h1>
+
+            <card :ref="card.id" style="margin-left: -35px; margin-right: -35px;" v-for="(card, index) in cardsInHand" :key="card.id"
+                  :style="{ zIndex: (index > selected ? 100 - index : 100 + index) }" class="my-2" :class="{ selected: (index === selected) }"
+                  :card="card" @click.native="select(index)"></card>
+        </div>
     </div>
 </template>
 
@@ -20,7 +22,7 @@
             }
         },
         computed: {
-            ...mapState(['cards', 'ownCards', 'turn']),
+            ...mapState(['game', 'cards', 'ownCards', 'turn']),
 
             cardsInHand: function () {
                 return _.filter(this.ownCards, function (o) {

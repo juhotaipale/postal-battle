@@ -44,7 +44,7 @@ export default new Vuex.Store({
             for (let i = 0; i < order.length; i++) {
                 axios.post('/api/game/' + payload + '/place/' + state.cards[order[i]].id);
 
-                await new Promise(r => setTimeout(r, 2000));
+                await new Promise(r => setTimeout(r, 1000));
             }
         }
     },

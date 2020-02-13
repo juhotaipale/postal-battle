@@ -1,7 +1,7 @@
 <template>
     <div class="game-container d-flex flex-column align-items-center justify-content-center">
         <div class="status py-4">
-            <h2>POSTAL BATTLE</h2>
+            <img src="/img/postal_battle.svg" height="70px" />
         </div>
         <div class="d-flex flex-grow-1 align-items-center mb-5 pb-5">
             <div class="d-flex flex-wrap justify-content-center">

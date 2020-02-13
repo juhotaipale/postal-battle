@@ -216,4 +216,21 @@ class GameController extends Controller
             .Address::rand().'<br />'
             .$postalCode.' '.$distributionCentre->name;
     }
+
+    public function demo(Game $game) {
+        $order = [0, 1, 2, 7, 3, 8, 14, 9, 10, 11, 4, 21, 5, 28, 15, 16, 17, 29, 30,
+            31, 6, 12, 13, 35, 36, 37, 38, 22, 23, 18, 24, 25, 26, 49, 50, 27, 32,
+            33, 39, 40, 34, 41, 51, 52, 53, 54, 42, 43, 55, 19, 20, 44, 45, 46, 47, 48];
+
+        $players = $game->players;
+        $i = 0;
+
+        foreach ($order as $index)
+        {
+            $game->cards[$index]->player()->associate($players[$i]);
+            $game->cards[$index]->save();
+
+            $i = ($i + 1 >= count($players) ? 0 : $i + 1);
+        }
+    }
 }
