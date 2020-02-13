@@ -12,7 +12,6 @@ use App\Helpers\Address;
 use App\Http\Resources\CardResource;
 use App\Http\Resources\GameResource;
 use App\Package;
-use App\Player;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +24,7 @@ class GameController extends Controller
      * Show all the games.
      *
      * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function index(Request $request)
     {
@@ -69,10 +68,10 @@ class GameController extends Controller
     }
 
     /**
-     * Create a new game.
+     * Create a game.
      *
      * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function create(Request $request)
     {
@@ -86,11 +85,11 @@ class GameController extends Controller
     }
 
     /**
-     * Join to game.
+     * Join to a game.
      *
      * @param Request $request
      * @param Game $game
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function join(Request $request, Game $game)
     {
@@ -100,9 +99,8 @@ class GameController extends Controller
         return $this->index($request);
     }
 
-
     /**
-     * Begin a game.
+     * Begin the game.
      *
      * @param Game $game
      */
@@ -133,6 +131,12 @@ class GameController extends Controller
         broadcast(new GameBegun($game))->toOthers();
     }
 
+    /**
+     * Place a card to the table.
+     *
+     * @param Game $game
+     * @param Card $card
+     */
     public function place(Game $game, Card $card)
     {
         $card->player()->associate(null);
@@ -192,6 +196,11 @@ class GameController extends Controller
         return new CardResource($card);
     }
 
+    /**
+     * Skip one turn.
+     *
+     * @param Game $game
+     */
     public function skipTurn(Game $game)
     {
         $next = $game->players()->pluck('id')->search($game->turn_player_id) + 1;
@@ -224,7 +233,7 @@ class GameController extends Controller
     }
 
     /**
-     * Generate cards.
+     * Generate cards for a game.
      */
     protected function generateCards()
     {
@@ -254,7 +263,7 @@ class GameController extends Controller
     }
 
     /**
-     * Generate an address for card.
+     * Generate address for the package.
      *
      * @param DistributionCentre $distributionCentre
      * @param string $postalCode
@@ -269,6 +278,11 @@ class GameController extends Controller
             .$postalCode.' '.$distributionCentre->name;
     }
 
+    /**
+     * Prepare cards for demo.
+     *
+     * @param Game $game
+     */
     public function demo(Game $game) {
         $order = [0, 1, 2, 7, 3, 8, 14, 9, 10, 11, 4, 21, 5, 28, 15, 16, 17, 29, 30,
             31, 6, 12, 13, 35, 36, 37, 38, 22, 23, 18, 24, 25, 26, 49, 50, 27, 32,
