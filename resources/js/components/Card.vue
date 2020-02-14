@@ -105,7 +105,7 @@
 
     .allowed {
         border-color: blue;
-        border-width: 2px;
+        border-width: 1px;
     }
 
     .address {

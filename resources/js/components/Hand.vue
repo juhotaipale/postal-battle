@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-column align-items-center justify-content-center" style="width: 90vw; height: 100%;">
-        <div class="pb-2">
+        <div class="pb-2" style="height: 40px;">
             <h4 v-if="game && !game.finished_at && myTurn">
                 <span v-if="! canPlaceCard" class="text-uppercase hover">
                     <span v-if="getCardLoading"><font-awesome-icon icon="circle-notch" spin /></span>

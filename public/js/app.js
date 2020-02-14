@@ -18945,7 +18945,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.card[data-v-b9bc2c0a] {\n    width: 120px;\n    height: 170px;\n    border: 1px solid gray;\n    border-radius: 0.5em;\n    box-shadow: 0px 5px 5px -2px rgba(50, 50, 50, 0.2);\n}\n.allowed[data-v-b9bc2c0a] {\n    border-color: blue;\n    border-width: 2px;\n}\n.address[data-v-b9bc2c0a] {\n    font-size: 70%;\n    border-top: 1px dotted gray;\n    border-bottom: 1px dotted gray;\n}\n.type[data-v-b9bc2c0a] {\n    font-weight: bold;\n}\n.jjfi[data-v-b9bc2c0a] {\n    font-size: 60%;\n}\n.distributionCentre[data-v-b9bc2c0a] {\n    font-size: 90%;\n}\n.postcode[data-v-b9bc2c0a] {\n    font-size: 100%;\n}\n.postcode > h2[data-v-b9bc2c0a] {\n    font-size: 120%;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-b9bc2c0a] {\n    width: 120px;\n    height: 170px;\n    border: 1px solid gray;\n    border-radius: 0.5em;\n    box-shadow: 0px 5px 5px -2px rgba(50, 50, 50, 0.2);\n}\n.allowed[data-v-b9bc2c0a] {\n    border-color: blue;\n    border-width: 1px;\n}\n.address[data-v-b9bc2c0a] {\n    font-size: 70%;\n    border-top: 1px dotted gray;\n    border-bottom: 1px dotted gray;\n}\n.type[data-v-b9bc2c0a] {\n    font-weight: bold;\n}\n.jjfi[data-v-b9bc2c0a] {\n    font-size: 60%;\n}\n.distributionCentre[data-v-b9bc2c0a] {\n    font-size: 90%;\n}\n.postcode[data-v-b9bc2c0a] {\n    font-size: 100%;\n}\n.postcode > h2[data-v-b9bc2c0a] {\n    font-size: 120%;\n}\n", ""]);
 
 // exports
 
@@ -59567,7 +59567,7 @@ var render = function() {
       staticStyle: { width: "90vw", height: "100%" }
     },
     [
-      _c("div", { staticClass: "pb-2" }, [
+      _c("div", { staticClass: "pb-2", staticStyle: { height: "40px" } }, [
         _vm.game && !_vm.game.finished_at && _vm.myTurn
           ? _c("h4", [
               !_vm.canPlaceCard
