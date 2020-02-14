@@ -116,6 +116,16 @@ class GameController extends Controller
         Auth::user()->game()->associate(null);
         Auth::user()->save();
 
+        $games = Game::query()
+            ->doesntHave('players')
+            ->where('started_at', null)
+            ->get();
+
+        foreach($games as $game) {
+            $game->delete();
+            broadcast(new GameUpdated($game));
+        }
+
         return $this->index($request);
     }
 
@@ -149,6 +159,7 @@ class GameController extends Controller
         $game->save();
 
         broadcast(new GameBegun($game))->toOthers();
+        broadcast(new GameUpdated($game));
     }
 
     /**
