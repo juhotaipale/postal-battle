@@ -12079,6 +12079,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     myTurn: function myTurn() {
       return this.turn.id == USER;
     },
+    winner: function winner() {
+      return this.game.winner.id == USER;
+    },
     canPlaceCard: function canPlaceCard() {
       var _this = this;
 
@@ -59613,7 +59616,7 @@ var render = function() {
             "d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center"
         },
         [
-          _vm.game && _vm.game.finished_at && _vm.cardsInHand.length === 0
+          _vm.game && _vm.game.finished_at && _vm.winner
             ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
                 _vm._v("You won the game")
               ])
@@ -74092,6 +74095,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     setGame: function setGame(state, payload) {
       state.game = {
         id: payload.id,
+        winner: payload.winner,
         finished_at: payload.finished_at
       };
       state.players = payload.players;

@@ -19,6 +19,7 @@ export default new Vuex.Store({
         setGame(state, payload) {
             state.game = {
                 id: payload.id,
+                winner: payload.winner,
                 finished_at: payload.finished_at,
             };
             state.players = payload.players;

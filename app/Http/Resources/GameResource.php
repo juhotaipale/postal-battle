@@ -20,6 +20,7 @@ class GameResource extends JsonResource
             'created_at' => $this->created_at,
             'started_at' => $this->started_at,
             'finished_at' => $this->finished_at,
+            'winner' => $this->winner,
             'players' => PlayerResource::collection($this->whenLoaded('players')),
             'cards' => CardResource::collection($this->whenLoaded('cards')),
         ];
