@@ -59613,7 +59613,7 @@ var render = function() {
             "d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center"
         },
         [
-          _vm.game && !_vm.game.finished_at && _vm.cardsInHand.length === 0
+          _vm.game && _vm.game.finished_at && _vm.cardsInHand.length === 0
             ? _c("h1", { staticClass: "align-self-center text-uppercase" }, [
                 _vm._v("You won the game")
               ])
@@ -59651,7 +59651,7 @@ var render = function() {
         2
       ),
       _vm._v(" "),
-      _vm.game && (_vm.cardsInHand.length === 0 || _vm.game.finished_at)
+      _vm.game && _vm.game.finished_at
         ? _c("a", { staticClass: "text-dark", attrs: { href: "/" } }, [
             _c("h4", { staticClass: "text-uppercase" }, [
               _vm._v("Return to main screen")

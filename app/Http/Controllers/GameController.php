@@ -186,7 +186,7 @@ class GameController extends Controller
 
         $game->save();
 
-        broadcast(new GameUpdated($game))->toOthers();
+        broadcast(new GameUpdated($game));
     }
 
     /**

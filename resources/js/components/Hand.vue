@@ -14,7 +14,7 @@
         </div>
 
         <div class="d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center">
-            <h1 v-if="game && !game.finished_at && cardsInHand.length === 0" class="align-self-center text-uppercase">You won the game</h1>
+            <h1 v-if="game && game.finished_at && cardsInHand.length === 0" class="align-self-center text-uppercase">You won the game</h1>
             <h1 v-else-if="game && game.finished_at" class="align-self-center text-uppercase">Game over</h1>
 
             <card v-if="!game.finished_at" :ref="card.id" style="margin-left: -35px; margin-right: -35px;" v-for="(card, index) in cardsInHand" :key="card.id"
@@ -22,7 +22,7 @@
                   :card="card" @click.native="select(index)"></card>
         </div>
 
-        <a v-if="game && (cardsInHand.length === 0 || game.finished_at)" href="/" class="text-dark">
+        <a v-if="game && (game.finished_at)" href="/" class="text-dark">
             <h4 class="text-uppercase">Return to main screen</h4>
         </a>
     </div>
