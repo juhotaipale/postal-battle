@@ -11908,6 +11908,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "GameTile",
   props: {
@@ -11984,6 +11987,19 @@ __webpack_require__.r(__webpack_exports__);
           _this2.loading = false;
         });
       }
+    },
+    leave: function leave() {
+      var _this3 = this;
+
+      if (this.loading) return;
+      this.loading = true;
+      axios.post('/api/game/' + this.game.id + '/leave').then(function (response) {
+        _this3.$parent.gameList = response.data;
+      })["catch"](function (error) {
+        alert(error.message);
+      })["finally"](function () {
+        _this3.loading = false;
+      });
     }
   },
   created: function created() {
@@ -59515,26 +59531,30 @@ var render = function() {
             ),
             _vm._v(" "),
             _c("div", { staticClass: "text-center" }, [
-              _c(
-                "h4",
-                {
-                  staticClass: "text-uppercase action",
-                  on: { click: _vm.joinOrBegin }
-                },
-                [
-                  _vm._v(
-                    "\n                " +
-                      _vm._s(
-                        _vm.inGame
-                          ? this.game.started_at
-                            ? "Continue"
-                            : "Begin"
-                          : "Join this game"
-                      ) +
-                      "\n            "
-                  )
-                ]
-              )
+              _c("h4", [
+                _c(
+                  "span",
+                  {
+                    staticClass: "text-uppercase action",
+                    on: { click: _vm.joinOrBegin }
+                  },
+                  [_vm._v(_vm._s(_vm.inGame ? "Begin" : "Join this game"))]
+                ),
+                _vm._v(" "),
+                _vm.inGame
+                  ? _c("span", [
+                      _vm._v(" or\n                    "),
+                      _c(
+                        "span",
+                        {
+                          staticClass: "text-uppercase action",
+                          on: { click: _vm.leave }
+                        },
+                        [_vm._v("Leave")]
+                      )
+                    ])
+                  : _vm._e()
+              ])
             ])
           ])
         : _c("div", { staticClass: "h-100 d-flex justify-content-center" }, [

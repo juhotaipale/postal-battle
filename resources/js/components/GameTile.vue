@@ -10,8 +10,11 @@
                 </span>
             </div>
             <div class="text-center">
-                <h4 class="text-uppercase action" @click="joinOrBegin">
-                    {{ inGame ? (this.game.started_at ? 'Continue' : 'Begin') : 'Join this game' }}
+                <h4>
+                    <span class="text-uppercase action" @click="joinOrBegin">{{ inGame ? 'Begin' : 'Join this game' }}</span>
+                    <span v-if="inGame"> or
+                        <span class="text-uppercase action" @click="leave">Leave</span>
+                    </span>
                 </h4>
             </div>
         </div>
@@ -105,6 +108,22 @@
                             this.loading = false;
                         });
                 }
+            },
+
+            leave: function () {
+                if (this.loading) return;
+                this.loading = true;
+
+                axios.post('/api/game/' + this.game.id + '/leave')
+                    .then(response => {
+                        this.$parent.gameList = response.data;
+                    })
+                    .catch(error => {
+                        alert(error.message);
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
             }
         },
 

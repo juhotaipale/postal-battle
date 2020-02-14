@@ -28,7 +28,7 @@ class GameController extends Controller
      */
     public function index(Request $request)
     {
-        if (!$request->is('api/*') && optional(Auth::user())->game) {
+        if (!$request->is('api/*') && optional(Auth::user())->game->started_at) {
             return redirect()->route('game', Auth::user()->game);
         }
 
@@ -94,6 +94,20 @@ class GameController extends Controller
     public function join(Request $request, Game $game)
     {
         Auth::user()->game()->associate($game);
+        Auth::user()->save();
+
+        return $this->index($request);
+    }
+
+    /**
+     * Leave from a game.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function leave(Request $request)
+    {
+        Auth::user()->game()->associate(null);
         Auth::user()->save();
 
         return $this->index($request);
