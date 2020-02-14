@@ -188,7 +188,7 @@
             document.addEventListener('keyup', (e) => {
                 if (e.code === "ArrowLeft") this.select(Math.max(0, this.selected - 1));
                 else if (e.code === "ArrowRight") this.select(Math.min(this.cardsInHand.length - 1, this.selected + 1));
-                else if (e.code === "Enter") this.place(this.cardsInHand[this.selected]);
+                else if (e.code === "Enter" || e.code === "ArrowUp") this.place(this.cardsInHand[this.selected]);
             });
         }
     }

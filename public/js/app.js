@@ -12212,7 +12212,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _this5 = this;
 
     document.addEventListener('keyup', function (e) {
-      if (e.code === "ArrowLeft") _this5.select(Math.max(0, _this5.selected - 1));else if (e.code === "ArrowRight") _this5.select(Math.min(_this5.cardsInHand.length - 1, _this5.selected + 1));else if (e.code === "Enter") _this5.place(_this5.cardsInHand[_this5.selected]);
+      if (e.code === "ArrowLeft") _this5.select(Math.max(0, _this5.selected - 1));else if (e.code === "ArrowRight") _this5.select(Math.min(_this5.cardsInHand.length - 1, _this5.selected + 1));else if (e.code === "Enter" || e.code === "ArrowUp") _this5.place(_this5.cardsInHand[_this5.selected]);
     });
   }
 });

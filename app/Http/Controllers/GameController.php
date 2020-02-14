@@ -41,7 +41,7 @@ class GameController extends Controller
 
         $history = Game::query()
             ->where('started_at', '!=', null)
-            ->orderBy('started_at')
+            ->orderByDesc('started_at')
             ->get();
 
         if ($request->is('api/*')) {
