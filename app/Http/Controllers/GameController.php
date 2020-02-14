@@ -209,7 +209,6 @@ class GameController extends Controller
         $next = ($next >= count($game->players) ? 0 : $next);
         $game->previous_player_id = $game->turn_player_id;
         $game->turn_player_id = $game->players[$next]->id;
-        $game->save();
 
         if (count($cards) === 1) {
             $game->finished_at = now();
@@ -219,6 +218,8 @@ class GameController extends Controller
                 $player->save();
             }
         }
+
+        $game->save();
 
         broadcast(new GameUpdated($game));
         return new CardResource($card);
