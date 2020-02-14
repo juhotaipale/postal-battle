@@ -41,6 +41,7 @@ class GameController extends Controller
 
         $history = Game::query()
             ->where('started_at', '!=', null)
+            ->where('finished_at', '!=', null)
             ->orderByDesc('started_at')
             ->get();
 
