@@ -28,7 +28,7 @@ class GameController extends Controller
      */
     public function index(Request $request)
     {
-        if (!$request->is('api/*') && optional(Auth::user())->game->started_at) {
+        if (!$request->is('api/*') && optional(optional(Auth::user())->game)->started_at) {
             return redirect()->route('game', Auth::user()->game);
         }
 
@@ -39,6 +39,11 @@ class GameController extends Controller
             ->orderBy('created_at')
             ->get();
 
+        $history = Game::query()
+            ->where('started_at', '!=', null)
+            ->orderBy('started_at')
+            ->get();
+
         if ($request->is('api/*')) {
             $collection = GameResource::collection($games);
             broadcast(new GameListUpdated($collection))->toOthers();
@@ -46,7 +51,7 @@ class GameController extends Controller
             return response()->json(GameResource::collection($collection));
         }
 
-        return view('index', compact('games'));
+        return view('index', compact('games', 'history'));
     }
 
     /**

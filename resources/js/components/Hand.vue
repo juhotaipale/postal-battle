@@ -14,8 +14,8 @@
         </div>
 
         <div class="d-flex flex-row flex-wrap mb-5 justify-content-center align-items-center">
-            <h1 v-if="game && cardsInHand.length === 0" class="align-self-center text-uppercase">You won the game</h1>
-            <h1 v-else-if="game && game.finished_at" class="align-self-center text-uppercase">Game over, you lost the game</h1>
+            <h1 v-if="game && !game.finished_at && cardsInHand.length === 0" class="align-self-center text-uppercase">You won the game</h1>
+            <h1 v-else-if="game && game.finished_at" class="align-self-center text-uppercase">Game over</h1>
 
             <card v-if="!game.finished_at" :ref="card.id" style="margin-left: -35px; margin-right: -35px;" v-for="(card, index) in cardsInHand" :key="card.id"
                   :style="{ zIndex: (index > selected ? 100 - index : 100 + index) }" class="my-2" :class="{ selected: (index === selected) }"

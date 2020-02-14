@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Player;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GameResource extends JsonResource

@@ -10,7 +10,7 @@
         @if (isset($game))
             <game :uuid="{{ json_encode($game->id) }}"></game>
         @else
-            <select-game :games="{{ json_encode($games) }}"></select-game>
+            <select-game :games="{{ json_encode($games) }}" :history="{{ json_encode($history) }}"></select-game>
         @endif
     @endauth
 

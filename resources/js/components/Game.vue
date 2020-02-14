@@ -4,7 +4,9 @@
             <div class="container">
                 <div class="row">
                     <div class="col-2">
-                        <img src="/img/postal_battle.svg" height="40px" />
+                        <a href="/">
+                            <img src="/img/postal_battle.svg" height="40px" />
+                        </a>
                     </div>
                     <div v-if="game && !game.finished_at" ref="turn" class="col-6">
                         <h2 v-if="turn.id == user" class="text-uppercase mb-0 mt-1">It's your turn</h2>
