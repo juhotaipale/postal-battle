@@ -205,7 +205,7 @@ class GameController extends Controller
         $card->player_id = $game->turn_player_id;
         $card->save();
 
-        if (count($game->players[$previous]->cards) === 0) {
+        if (count($cards) === 1) {
             $game->finished_at = now();
 
             foreach ($game->players as $player) {
