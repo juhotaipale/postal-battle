@@ -43,7 +43,11 @@
             },
 
             myTurn: function () {
-                return this.game && this.turn.id == USER;
+                if (this.turn) {
+                    return this.turn.id == USER;
+                }
+
+                return false;
             },
 
             distributionCentres: function () {

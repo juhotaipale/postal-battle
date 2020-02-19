@@ -11837,7 +11837,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return USER;
     },
     myTurn: function myTurn() {
-      return this.game && this.turn.id == USER;
+      if (this.turn) {
+        return this.turn.id == USER;
+      }
+
+      return false;
     },
     distributionCentres: function distributionCentres() {
       return _.filter(this.cards, function (o) {
