@@ -28,7 +28,8 @@ class Player extends Authenticatable
 
     public function cards(): HasMany
     {
-        return $this->hasMany(Card::class);
+        return $this->hasMany(Card::class)
+            ->where('game_id', '=', $this->game_id);
     }
 
     public function game(): BelongsTo
