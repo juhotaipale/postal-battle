@@ -136,27 +136,30 @@ class GameController extends Controller
      */
     public function begin(Game $game)
     {
-        $cards = $game->cards->shuffle();
-        $players = $game->players;
-        $firstPlayer = 0;
-        $i = 0;
+        if (! $game->started_at) {
+            $game->started_at = now();
+            $game->save();
 
-        foreach ($cards as $card)
-        {
-            $card->player()->associate($players[$i]);
-            $card->save();
+            $cards = $game->cards->shuffle();
+            $players = $game->players;
+            $firstPlayer = 0;
+            $i = 0;
 
-            // First turn to the player who has the first card
-            if ($card->cardable->code === '00000') {
-                $firstPlayer = $i;
+            foreach ($cards as $card) {
+                $card->player()->associate($players[$i]);
+                $card->save();
+
+                // First turn to the player who has the first card
+                if ($card->cardable->code === '00000') {
+                    $firstPlayer = $i;
+                }
+
+                $i = ($i + 1 >= count($players) ? 0 : $i + 1);
             }
 
-            $i = ($i + 1 >= count($players) ? 0 : $i + 1);
+            $game->turn_player_id = $players[$firstPlayer]->id;
+            $game->save();
         }
-
-        $game->turn_player_id = $players[$firstPlayer]->id;
-        $game->started_at = now();
-        $game->save();
 
         broadcast(new GameBegun($game))->toOthers();
         broadcast(new GameUpdated($game));
