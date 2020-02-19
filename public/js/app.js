@@ -12060,7 +12060,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Hand",
@@ -12215,7 +12214,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _this5 = this;
 
     document.addEventListener('keyup', function (e) {
-      if (e.code === "ArrowLeft") _this5.select(Math.max(0, _this5.selected - 1));else if (e.code === "ArrowRight") _this5.select(Math.min(_this5.cardsInHand.length - 1, _this5.selected + 1));else if (e.code === "Enter" || e.code === "ArrowUp") _this5.place(_this5.cardsInHand[_this5.selected]);
+      if (e.code === "ArrowLeft") _this5.select(Math.max(0, _this5.selected - 1));else if (e.code === "ArrowRight") _this5.select(Math.min(_this5.cardsInHand.length - 1, _this5.selected + 1));else if (e.code === "Enter" || e.code === "ArrowUp") _this5.place(_this5.cardsInHand[_this5.selected]);else if (e.code === "Space" && _this5.turn.skip) _this5.skipTurn();else if (e.code === "Space" && !_this5.canPlaceCard) _this5.getCard();
     });
   }
 });
@@ -18948,7 +18947,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.card[data-v-b9bc2c0a] {\n    width: 120px;\n    height: 170px;\n    border: 1px solid gray;\n    border-radius: 0.5em;\n    box-shadow: 0px 5px 5px -2px rgba(50, 50, 50, 0.2);\n}\n.allowed[data-v-b9bc2c0a] {\n    border-color: blue;\n    border-width: 1px;\n}\n.address[data-v-b9bc2c0a] {\n    font-size: 70%;\n    border-top: 1px dotted gray;\n    border-bottom: 1px dotted gray;\n}\n.type[data-v-b9bc2c0a] {\n    font-weight: bold;\n}\n.jjfi[data-v-b9bc2c0a] {\n    font-size: 60%;\n}\n.distributionCentre[data-v-b9bc2c0a] {\n    font-size: 90%;\n}\n.postcode[data-v-b9bc2c0a] {\n    font-size: 100%;\n}\n.postcode > h2[data-v-b9bc2c0a] {\n    font-size: 120%;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-b9bc2c0a] {\n    width: 120px;\n    height: 170px;\n    border: 1px solid gray;\n    border-radius: 0.5em;\n    box-shadow: 0px 5px 5px -2px rgba(50, 50, 50, 0.2);\n}\n.allowed[data-v-b9bc2c0a] {\n    border-color: blue;\n    border-width: 2px;\n}\n.address[data-v-b9bc2c0a] {\n    font-size: 70%;\n    border-top: 1px dotted gray;\n    border-bottom: 1px dotted gray;\n}\n.type[data-v-b9bc2c0a] {\n    font-weight: bold;\n}\n.jjfi[data-v-b9bc2c0a] {\n    font-size: 60%;\n}\n.distributionCentre[data-v-b9bc2c0a] {\n    font-size: 90%;\n}\n.postcode[data-v-b9bc2c0a] {\n    font-size: 100%;\n}\n.postcode > h2[data-v-b9bc2c0a] {\n    font-size: 120%;\n}\n", ""]);
 
 // exports
 
@@ -59573,7 +59572,7 @@ var render = function() {
       _c("div", { staticClass: "pb-2", staticStyle: { height: "40px" } }, [
         _vm.game && !_vm.game.finished_at && _vm.myTurn
           ? _c("h4", [
-              !_vm.canPlaceCard
+              !_vm.canPlaceCard && !_vm.turn.skip
                 ? _c("span", { staticClass: "text-uppercase hover" }, [
                     _vm.getCardLoading
                       ? _c(
@@ -59589,10 +59588,6 @@ var render = function() {
                           _vm._v("Get a card from previous player")
                         ])
                   ])
-                : _vm._e(),
-              _vm._v(" "),
-              !_vm.canPlaceCard && _vm.turn.skip
-                ? _c("span", [_vm._v(" or ")])
                 : _vm._e(),
               _vm._v(" "),
               _vm.turn.skip

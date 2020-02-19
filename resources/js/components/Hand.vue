@@ -2,11 +2,10 @@
     <div class="d-flex flex-column align-items-center justify-content-center" style="width: 90vw; height: 100%;">
         <div class="pb-2" style="height: 40px;">
             <h4 v-if="game && !game.finished_at && myTurn">
-                <span v-if="! canPlaceCard" class="text-uppercase hover">
+                <span v-if="! canPlaceCard && ! turn.skip" class="text-uppercase hover">
                     <span v-if="getCardLoading"><font-awesome-icon icon="circle-notch" spin /></span>
                     <span v-else @click="getCard">Get a card from previous player</span>
                 </span>
-                <span v-if="! canPlaceCard && turn.skip"> or </span>
                 <span v-if="turn.skip" class="text-uppercase hover" @click="skipTurn">
                     Skip your turn
                 </span>
@@ -193,6 +192,8 @@
                 if (e.code === "ArrowLeft") this.select(Math.max(0, this.selected - 1));
                 else if (e.code === "ArrowRight") this.select(Math.min(this.cardsInHand.length - 1, this.selected + 1));
                 else if (e.code === "Enter" || e.code === "ArrowUp") this.place(this.cardsInHand[this.selected]);
+                else if (e.code === "Space" && this.turn.skip) this.skipTurn();
+                else if (e.code === "Space" && ! this.canPlaceCard) this.getCard();
             });
         }
     }
