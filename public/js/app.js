@@ -11836,6 +11836,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     user: function user() {
       return USER;
     },
+    myTurn: function myTurn() {
+      return this.game && this.turn.id == USER;
+    },
     distributionCentres: function distributionCentres() {
       return _.filter(this.cards, function (o) {
         return o.type === 'distributionCentre';
@@ -59388,7 +59391,7 @@ var render = function() {
     "div",
     {
       staticClass: "game-container d-flex flex-column align-items-center",
-      class: { activeTurn: _vm.turn.id == _vm.user }
+      class: { activeTurn: _vm.myTurn }
     },
     [
       _c("div", { staticClass: "status w-100 pt-4 align-self-baseline" }, [
