@@ -1,5 +1,5 @@
 <template>
-    <div class="game-container d-flex flex-column align-items-center" :class="{ 'activeTurn': turn.id == user }">
+    <div class="game-container d-flex flex-column align-items-center" :class="{ 'activeTurn': game && turn.id == user }">
         <div class="status w-100 pt-4 align-self-baseline">
             <div class="container">
                 <div class="row">
