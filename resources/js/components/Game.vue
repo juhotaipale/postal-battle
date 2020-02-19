@@ -1,5 +1,5 @@
 <template>
-    <div class="game-container d-flex flex-column align-items-center">
+    <div class="game-container d-flex flex-column align-items-center" :class="{ 'activeTurn': turn.id == user }">
         <div class="status w-100 pt-4 align-self-baseline">
             <div class="container">
                 <div class="row">
@@ -90,6 +90,11 @@
 <style scoped>
     .game-container {
         height: 100%;
+        border: 5px dashed transparent;
+    }
+
+    .activeTurn {
+        border-color: orangered !important;
     }
 
     .blinker {

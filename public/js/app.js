@@ -18966,7 +18966,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.game-container[data-v-3a2c79dd] {\n    height: 100%;\n}\n.blinker[data-v-3a2c79dd] {\n    -webkit-animation: blink-data-v-3a2c79dd .1s step-end 5 alternate;\n            animation: blink-data-v-3a2c79dd .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-3a2c79dd {\n50% {\n        color: red;\n}\n}\n@keyframes blink-data-v-3a2c79dd {\n50% {\n        color: red;\n}\n}\n", ""]);
+exports.push([module.i, "\n.game-container[data-v-3a2c79dd] {\n    height: 100%;\n    border: 5px dashed transparent;\n}\n.activeTurn[data-v-3a2c79dd] {\n    border-color: orangered !important;\n}\n.blinker[data-v-3a2c79dd] {\n    -webkit-animation: blink-data-v-3a2c79dd .1s step-end 5 alternate;\n            animation: blink-data-v-3a2c79dd .1s step-end 5 alternate;\n}\n@-webkit-keyframes blink-data-v-3a2c79dd {\n50% {\n        color: red;\n}\n}\n@keyframes blink-data-v-3a2c79dd {\n50% {\n        color: red;\n}\n}\n", ""]);
 
 // exports
 
@@ -59386,7 +59386,10 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "game-container d-flex flex-column align-items-center" },
+    {
+      staticClass: "game-container d-flex flex-column align-items-center",
+      class: { activeTurn: _vm.turn.id == _vm.user }
+    },
     [
       _c("div", { staticClass: "status w-100 pt-4 align-self-baseline" }, [
         _c("div", { staticClass: "container" }, [
