@@ -59404,7 +59404,7 @@ var render = function() {
             _vm._m(0),
             _vm._v(" "),
             _vm.game && !_vm.game.finished_at
-              ? _c("div", { ref: "turn", staticClass: "col-6" }, [
+              ? _c("div", { ref: "turn", staticClass: "col-8" }, [
                   _vm.turn.id == _vm.user
                     ? _c("h2", { staticClass: "text-uppercase mb-0 mt-1" }, [
                         _vm._v("It's your turn")

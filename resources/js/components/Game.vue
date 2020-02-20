@@ -8,7 +8,7 @@
                             <img src="/img/postal_battle.svg" height="40px" />
                         </a>
                     </div>
-                    <div v-if="game && !game.finished_at" ref="turn" class="col-6">
+                    <div v-if="game && !game.finished_at" ref="turn" class="col-8">
                         <h2 v-if="turn.id == user" class="text-uppercase mb-0 mt-1">It's your turn</h2>
                         <h2 v-else-if="turn" class="mb-0 mt-1">Waiting for {{ turn.name }}'s move...</h2>
                     </div>
